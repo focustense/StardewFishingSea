@@ -10,9 +10,9 @@ internal static class SplashPredictor
 {
     record SplashStart(Point Tile, int StartTimeOfDay, int MinimumDuration, string? FrenzyFishId)
     {
-        public Splash ToSplash()
+        public Splash ToSplash(int endTimeOfDay)
         {
-            return new(Tile, StartTimeOfDay, Game1.timeOfDay, FrenzyFishId);
+            return new(Tile, StartTimeOfDay, endTimeOfDay, FrenzyFishId);
         }
     }
 
@@ -25,14 +25,14 @@ internal static class SplashPredictor
         SplashStart? currentSplash = null;
         var mapSize = location.Map.RequireLayer("Back").LayerSize;
         var frenzyThreshold = SplashRules.GetFrenzyThreshold(location);
-        for (int timeOfDay = GameRules.StartOfDay; timeOfDay < GameRules.EndOfDay; timeOfDay += 10)
+        for (int timeOfDay = GameRules.StartOfDay; timeOfDay < GameRules.EndOfDay; timeOfDay = Utility.ModifyTime(timeOfDay, 10))
         {
             var random = Utility.CreateDaySaveRandom(timeOfDay, location.Map.Layers[0].LayerWidth);
             if (currentSplash is not null)
             {
                 int currentDuration = Utility.CalculateMinutesBetweenTimes(
                     currentSplash.StartTimeOfDay,
-                    Game1.timeOfDay
+                    timeOfDay
                 );
                 // Game code does the random sample before checking against the minimum duration, so
                 // we have to do the same.
@@ -41,7 +41,7 @@ internal static class SplashPredictor
                     SplashRules.SplashEndThreshold + (currentDuration / SplashRules.DurationWeight);
                 if (sample < threshold && currentDuration > currentSplash.MinimumDuration)
                 {
-                    yield return currentSplash.ToSplash();
+                    yield return currentSplash.ToSplash(timeOfDay);
                     currentSplash = null;
                 }
                 continue;
@@ -56,7 +56,9 @@ internal static class SplashPredictor
                 //
                 // If we were trying to predict every possible thing about a location (e.g. panning)
                 // then we'd need to move the farm-check farther down because the same random
-                // instance is reused.
+                // instance is reused; but for now, we aren't, and the random seed is recreated in
+                // every `GameLocation.performTenMinuteUpdate` loop so there is no need to run it
+                // through the other RNG dependencies in this one to stay consistent.
                 continue;
             }
             // Why the game does multiple "tries" picking random splash spots instead of just
@@ -84,16 +86,25 @@ internal static class SplashPredictor
                 var frenzySample = random.NextDouble();
                 if (frenzySample < frenzyThreshold && SplashRules.IsFrenzyAllowed(location))
                 {
-                    var fish = location.getFish(random.Next(500), "", distanceToLand, Game1.player, 0.0, new(x, y));
+                    var fish = location.getFish(
+                        random.Next(500),
+                        "",
+                        distanceToLand,
+                        Game1.player,
+                        0.0,
+                        new(x, y)
+                    );
                     frenzyFishId = fish?.QualifiedItemId;
                 }
-                var minDuration = frenzyFishId is not null ? SplashRules.MinimumFrenzyDuration : SplashRules.MinimumNonFrenzyDuration;
-                currentSplash = new(new(x, y), Game1.timeOfDay, minDuration, frenzyFishId);
+                var minDuration = frenzyFishId is not null
+                    ? SplashRules.MinimumFrenzyDuration
+                    : SplashRules.MinimumNonFrenzyDuration;
+                currentSplash = new(new(x, y), timeOfDay, minDuration, frenzyFishId);
             }
         }
         if (currentSplash is not null)
         {
-            yield return currentSplash.ToSplash();
+            yield return currentSplash.ToSplash(GameRules.EndOfDay);
         }
     }
 }
