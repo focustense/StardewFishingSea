@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using Microsoft.VisualBasic;
 using StardewValley.Locations;
 
 namespace FishingBuddy;

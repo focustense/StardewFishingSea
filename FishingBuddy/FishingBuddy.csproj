@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>FishingBuddy</AssemblyName>
         <RootNamespace>FishingBuddy</RootNamespace>
@@ -36,4 +36,6 @@
       <Using Alias="Rectangle" Include="Microsoft.Xna.Framework.Rectangle" />
       <Using Alias="Vector2" Include="Microsoft.Xna.Framework.Vector2" />
   </ItemGroup>
+
+    <Import Project="..\StardewUI\StardewUI.projitems" Label="Shared" />
 </Project>

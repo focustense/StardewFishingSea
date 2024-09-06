@@ -25,7 +25,11 @@ internal static class SplashPredictor
         SplashStart? currentSplash = null;
         var mapSize = location.Map.RequireLayer("Back").LayerSize;
         var frenzyThreshold = SplashRules.GetFrenzyThreshold(location);
-        for (int timeOfDay = GameRules.StartOfDay; timeOfDay < GameRules.EndOfDay; timeOfDay = Utility.ModifyTime(timeOfDay, 10))
+        for (
+            int timeOfDay = GameRules.StartOfDay;
+            timeOfDay < GameRules.EndOfDay;
+            timeOfDay = Utility.ModifyTime(timeOfDay, 10)
+        )
         {
             var random = Utility.CreateDaySaveRandom(timeOfDay, location.Map.Layers[0].LayerWidth);
             if (currentSplash is not null)
