@@ -1,7 +1,9 @@
 ﻿using FishingBuddy.UI;
+using HarmonyLib;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewUI;
+using StardewValley.Internal;
 
 namespace FishingBuddy;
 
@@ -29,6 +31,34 @@ internal sealed class ModEntry : Mod
         helper.Events.GameLoop.ReturnedToTitle += GameLoop_ReturnedToTitle;
         helper.Events.GameLoop.TimeChanged += GameLoop_TimeChanged;
         helper.Events.Player.Warped += Player_Warped;
+
+        var harmony = new Harmony(ModManifest.UniqueID);
+        // GetFishFromLocation data is public, but the overload containing the real
+        // implementation is internal.
+        var getFishFromLocationDataMethod = AccessTools.Method(
+            typeof(GameLocation),
+            nameof(GameLocation.GetFishFromLocationData),
+            [
+                typeof(string), // locationName
+                typeof(Vector2), // bobberTile
+                typeof(int), // waterDepth
+                typeof(Farmer), // player
+                typeof(bool), // isTutorialCatch
+                typeof(bool), // isInherited
+                typeof(GameLocation),
+                typeof(ItemQueryContext),
+            ]
+        );
+        var allGameRandomRefsTranspilerMethod = new HarmonyMethod(
+            typeof(LocationFishPatches),
+            nameof(LocationFishPatches.AllGameRandomRefsTranspiler)
+        );
+        harmony.Patch(getFishFromLocationDataMethod, transpiler: allGameRandomRefsTranspilerMethod);
+        var orderings = LocationFishPatches.GetOrderByMethods(getFishFromLocationDataMethod);
+        foreach (var orderMethod in orderings)
+        {
+            harmony.Patch(orderMethod, transpiler: allGameRandomRefsTranspilerMethod);
+        }
     }
 
     private void Display_RenderedWorld(object? sender, RenderedWorldEventArgs e)

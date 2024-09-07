@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <AssemblyName>FishingBuddy</AssemblyName>
-        <RootNamespace>FishingBuddy</RootNamespace>
-        <Version>0.1.0</Version>
-        <TargetFramework>net6.0</TargetFramework>
-        <LangVersion>Latest</LangVersion>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <WarningsAsErrors>Nullable</WarningsAsErrors>
+      <AssemblyName>FishingBuddy</AssemblyName>
+      <RootNamespace>FishingBuddy</RootNamespace>
+      <Version>0.1.0</Version>
+      <TargetFramework>net6.0</TargetFramework>
+      <LangVersion>Latest</LangVersion>
+      <ImplicitUsings>enable</ImplicitUsings>
+      <Nullable>enable</Nullable>
+      <WarningsAsErrors>Nullable</WarningsAsErrors>
+      <EnableHarmony>true</EnableHarmony>
     </PropertyGroup>
 
     <ItemGroup>
