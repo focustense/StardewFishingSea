@@ -28,6 +28,8 @@ internal static class LocationFishPatches
         MethodBase original
     )
     {
+        // Original: Game1.random (field)
+        // Patched:  FishRandom.Instance (property)
         return new CodeMatcher(instructions, gen)
             .MatchStartForward(new CodeMatch(OpCodes.Ldsfld, gameRandomField))
             .Repeat(matcher =>

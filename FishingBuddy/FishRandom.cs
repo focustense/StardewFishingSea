@@ -1,4 +1,6 @@
-﻿namespace FishingBuddy;
+﻿using StardewModdingAPI.Utilities;
+
+namespace FishingBuddy;
 
 /// <summary>
 /// Chooses the source of randomness for fishing-related functions.
@@ -28,7 +30,22 @@ internal static class FishRandom
         Source == FishRandomSource.Replayable ? ReplayableRandom.Global : Game1.random;
 
     /// <summary>
-    /// Configures the source for fishing randomness..
+    /// Configures the source for fishing randomness.
     /// </summary>
-    public static FishRandomSource Source { get; set; } = FishRandomSource.Default;
+    public static FishRandomSource Source
+    {
+        get => source.Value;
+        set => source.Value = value;
+    }
+
+    private static readonly PerScreen<FishRandomSource> source =
+        new(() => FishRandomSource.Default);
+
+    /// <summary>
+    /// Resets to <see cref="FishRandomSource.Default"/> on all screens.
+    /// </summary>
+    public static void ResetAllScreens()
+    {
+        source.ResetAllScreens();
+    }
 }

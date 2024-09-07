@@ -98,7 +98,14 @@ internal static class SplashPredictor
                         0.0,
                         new(x, y)
                     );
-                    frenzyFishId = fish?.QualifiedItemId;
+                    if (
+                        fish is not null
+                        && fish.Category == -4
+                        && !fish.HasContextTag("fish_legendary")
+                    )
+                    {
+                        frenzyFishId = fish?.QualifiedItemId;
+                    }
                 }
                 var minDuration = frenzyFishId is not null
                     ? SplashRules.MinimumFrenzyDuration

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using HarmonyLib;
+using StardewModdingAPI.Utilities;
 
 namespace FishingBuddy;
 
@@ -12,7 +13,7 @@ internal class ReplayableRandom : Random
     /// <summary>
     /// Replayable fork of the game's global entropy (<see cref="Game1.random"/>).
     /// </summary>
-    public static readonly ReplayableRandom Global = new(() => Game1.random);
+    public static ReplayableRandom Global => global.Value;
 
     private object Impl
     {
@@ -20,9 +21,12 @@ internal class ReplayableRandom : Random
         set => Traverse.Create(this).Field("_impl").SetValue(value);
     }
 
+    private static readonly PerScreen<ReplayableRandom> global = new(() => new(() => Game1.random));
+
+    private readonly Func<Random> sourceFactory;
+
     private IPrngState? snapshot;
     private Random? source;
-    private Func<Random> sourceFactory;
 
     /// <summary>
     /// Creates a new <see cref="ReplayableRandom"/> using a factory/selector providing the source
