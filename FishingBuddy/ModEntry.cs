@@ -45,7 +45,7 @@ internal sealed class ModEntry : Mod
 
         Logger.Monitor = Monitor;
 
-        helper.Events.Display.RenderedWorld += Display_RenderedWorld;
+        helper.Events.Display.RenderedStep += Display_RenderedStep;
         helper.Events.GameLoop.DayStarted += GameLoop_DayStarted;
         helper.Events.GameLoop.ReturnedToTitle += GameLoop_ReturnedToTitle;
         helper.Events.GameLoop.TimeChanged += GameLoop_TimeChanged;
@@ -123,10 +123,13 @@ internal sealed class ModEntry : Mod
         );
     }
 
-    private void Display_RenderedWorld(object? sender, RenderedWorldEventArgs e)
+    private void Display_RenderedStep(object? sender, RenderedStepEventArgs e)
     {
-        DrawCatchPreviews(e.SpriteBatch);
-        DrawSplashPreview(e.SpriteBatch);
+        if (e.Step == StardewValley.Mods.RenderSteps.World_Background)
+        {
+            DrawCatchPreviews(e.SpriteBatch);
+            DrawSplashPreview(e.SpriteBatch);
+        }
     }
 
     private void GameLoop_DayStarted(object? sender, DayStartedEventArgs e)
@@ -189,6 +192,7 @@ internal sealed class ModEntry : Mod
     {
         if (
             !CatchPreview.Enabled
+            || !Game1.currentLocation.canFishHere()
             || (
                 config.CatchPreviewVisibility == CatchPreviewVisibility.OnlyWhenRodSelected
                 && Game1.player.CurrentTool is not FishingRod

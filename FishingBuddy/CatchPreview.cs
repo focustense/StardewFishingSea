@@ -50,9 +50,12 @@ internal class CatchPreview(Func<ModConfig> configSelector)
     private int lastUpdateTimeOfDay;
     private bool isEnabled;
 
+    /// <summary>
+    /// Updates predictions for the current time/location.
+    /// </summary>
     public void Update()
     {
-        if (!isEnabled)
+        if (!isEnabled || !Game1.currentLocation.canFishHere())
         {
             return;
         }
