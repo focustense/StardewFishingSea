@@ -13,6 +13,7 @@ namespace FishingBuddy;
 internal sealed class ModEntry : Mod
 {
     private CatchPreview CatchPreview => catchPreview.Value;
+    private FishingState FishingState => fishingState.Value;
     private Splash? Splash
     {
         get => splash.Value;
@@ -28,6 +29,7 @@ internal sealed class ModEntry : Mod
     private ModConfig config = null!;
 
     private readonly PerScreen<CatchPreview> catchPreview;
+    private readonly PerScreen<FishingState> fishingState;
     private readonly PerScreen<Splash?> splash = new();
     private readonly PerScreen<SpeechBubble<SplashInfoView>> splashOverlay =
         new(CreateSplashOverlay);
@@ -36,6 +38,15 @@ internal sealed class ModEntry : Mod
     public ModEntry()
     {
         catchPreview = new(() => new CatchPreview(() => config));
+        fishingState = new(() =>
+        {
+            var state = new FishingState();
+            state.Cast += FishingState_Cast;
+            state.Cancelled += FishingState_Cancelled;
+            state.Caught += FishingState_Caught;
+            state.Lost += FishingState_Lost;
+            return state;
+        });
     }
 
     public override void Entry(IModHelper helper)
@@ -125,11 +136,44 @@ internal sealed class ModEntry : Mod
 
     private void Display_RenderedStep(object? sender, RenderedStepEventArgs e)
     {
+        if (!Context.IsWorldReady)
+        {
+            return;
+        }
         if (e.Step == StardewValley.Mods.RenderSteps.World_Background)
         {
             DrawCatchPreviews(e.SpriteBatch);
             DrawSplashPreview(e.SpriteBatch);
         }
+    }
+
+    private void FishingState_Cancelled(object? sender, EventArgs e)
+    {
+        CatchPreview.Frozen = false;
+        if (config.CatchResetOnCancel)
+        {
+            CatchPreview.Update(forceImmediateUpdate: true);
+        }
+    }
+
+    private void FishingState_Cast(object? sender, EventArgs e)
+    {
+        if (config.CatchFreezeOnCast)
+        {
+            CatchPreview.Frozen = true;
+        }
+    }
+
+    private void FishingState_Caught(object? sender, EventArgs e)
+    {
+        CatchPreview.Frozen = false;
+        CatchPreview.Update(forceImmediateUpdate: true);
+    }
+
+    private void FishingState_Lost(object? sender, EventArgs e)
+    {
+        CatchPreview.Frozen = false;
+        CatchPreview.Update(forceImmediateUpdate: true);
     }
 
     private void GameLoop_DayStarted(object? sender, DayStartedEventArgs e)
@@ -152,6 +196,11 @@ internal sealed class ModEntry : Mod
 
     private void GameLoop_UpdateTicked(object? sender, UpdateTickedEventArgs e)
     {
+        if (!Context.IsWorldReady)
+        {
+            return;
+        }
+        FishingState.Update(Game1.player.CurrentTool as FishingRod);
         CatchPreview.Update();
     }
 

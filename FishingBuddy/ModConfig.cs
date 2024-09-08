@@ -51,7 +51,7 @@ public class ModConfig
     /// <para>
     /// Setting this to <c>true</c> will prevent both predicted and actual fish casts from changing
     /// during the cast animation or while waiting for a bite, which can make catching a specific
-    /// fish significantly easier. Perhaps too easy.
+    /// fish significantly easier and doesn't require good bait/spinners.
     /// </para>
     /// <para>
     /// However, this only freezes the random state; it does not freeze the actual fish. If the
@@ -59,7 +59,7 @@ public class ModConfig
     /// catching it, then the fish will still change.
     /// </para>
     /// </remarks>
-    public bool CatchPreviewFreezeOnCast { get; set; }
+    public bool CatchFreezeOnCast { get; set; }
 
     /// <summary>
     /// Radius from the player's location within which to check and show fish-catch previews.
@@ -76,16 +76,6 @@ public class ModConfig
         new(new Keybind(SButton.LeftShift, SButton.F));
 
     /// <summary>
-    /// Number of in-game minutes between updates of the fish-catch previews, and the catches
-    /// themselves.
-    /// </summary>
-    /// <remarks>
-    /// Currently is expected to be a multiple of 10 (the rate at which the vanilla game clock
-    /// actually updates) and will be rounded to the nearest multiple otherwise.
-    /// </remarks>
-    public int CatchPreviewUpdateInterval { get; set; } = 10;
-
-    /// <summary>
     /// When catch previews are actually visible.
     /// </summary>
     /// <remarks>
@@ -95,6 +85,24 @@ public class ModConfig
     /// </remarks>
     public CatchPreviewVisibility CatchPreviewVisibility { get; set; } =
         CatchPreviewVisibility.OnlyWhenRodSelected;
+
+    /// <summary>
+    /// Whether to force a reset of the fishing randomness on every fishing cancellation.
+    /// </summary>
+    /// <remarks>
+    /// Cancellation means reeling in without having hooked any fish.
+    /// </remarks>
+    public bool CatchResetOnCancel { get; set; } = false;
+
+    /// <summary>
+    /// Number of in-game minutes between updates of the fish-catch previews, and the catches
+    /// themselves.
+    /// </summary>
+    /// <remarks>
+    /// Currently is expected to be a multiple of 10 (the rate at which the vanilla game clock
+    /// actually updates) and will be rounded to the nearest multiple otherwise.
+    /// </remarks>
+    public int CatchUpdateInterval { get; set; } = 10;
 
     /// <summary>
     /// Configures when splash previews (balloons over current/future bubble spots) are visible.

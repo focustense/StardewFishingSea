@@ -53,7 +53,9 @@ internal class CatchPreview(Func<ModConfig> configSelector)
     /// <summary>
     /// Updates predictions for the current time/location.
     /// </summary>
-    public void Update()
+    /// <param name="forceImmediateUpdate">Whether to immediately sync the fishing random state to
+    /// the game's current random state, regardless of whether enough time has passed.</param>
+    public void Update(bool forceImmediateUpdate = false)
     {
         if (!isEnabled || !Game1.currentLocation.canFishHere())
         {
@@ -74,18 +76,19 @@ internal class CatchPreview(Func<ModConfig> configSelector)
             Game1.timeOfDay
         );
         if (
-            locationName == lastLocationName
+            !forceImmediateUpdate
+            && locationName == lastLocationName
             && playerTile == lastPlayerTile
             && rodId == lastRodId
             && baitId == lastBaitId
             && tackleIds.SequenceEqual(lastTackleIds)
-            && minutesElapsed < config.CatchPreviewUpdateInterval
+            && minutesElapsed < config.CatchUpdateInterval
         )
         {
             return;
         }
         var rng = ReplayableRandom.Global;
-        if (!Frozen && minutesElapsed >= config.CatchPreviewUpdateInterval)
+        if (forceImmediateUpdate || (!Frozen && minutesElapsed >= config.CatchUpdateInterval))
         {
             rng.Snapshot();
         }
