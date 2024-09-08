@@ -50,7 +50,7 @@ internal class SplashInfoView : WrapperView
     private int durationMinutes;
 
     private Label? durationLabel;
-    private Panel? imagePanel = null!;
+    private Panel? imagePanel;
 
     protected override IView CreateView()
     {

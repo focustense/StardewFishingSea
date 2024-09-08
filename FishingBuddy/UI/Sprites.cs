@@ -14,6 +14,29 @@ internal static class Sprites
     public static Sprite GenericFish => new(Game1.mouseCursors, new(615, 1841, 19, 19));
 
     /// <summary>
+    /// Semi-rounded frame that looks like a drawer pulled out from the <see cref="OverlayFrame"/>.
+    /// </summary>
+    public static Sprite OverlayDrawer =>
+        new(
+            Game1.mouseCursors,
+            SourceRect: new(317, 361, 12, 22),
+            FixedEdges: new(1, 7, 6, 4),
+            SliceSettings: new(Scale: 4)
+        );
+
+    /// <summary>
+    /// Frame used for game-world overlays; very similar to <see cref="UiSprites.ControlBorder"/>
+    /// but more uniform and without shadows.
+    /// </summary>
+    public static Sprite OverlayFrame =>
+        new(
+            Game1.mouseCursors,
+            SourceRect: new(293, 360, 24, 24),
+            FixedEdges: new(5),
+            SliceSettings: new(Scale: 4)
+        );
+
+    /// <summary>
     /// The main body of the comic-style speech bubble which is partially open at the bottom.
     /// </summary>
     public static Sprite SpeechBubbleBody =>

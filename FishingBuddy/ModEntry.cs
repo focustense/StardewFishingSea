@@ -1,5 +1,6 @@
 ﻿using FishingBuddy.UI;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
@@ -14,6 +15,7 @@ internal sealed class ModEntry : Mod
 {
     private CatchPreview CatchPreview => catchPreview.Value;
     private FishingState FishingState => fishingState.Value;
+    private SeedFishInfoView SeedFishPreview => seedFishPreview.Value;
     private Splash? Splash
     {
         get => splash.Value;
@@ -30,6 +32,7 @@ internal sealed class ModEntry : Mod
 
     private readonly PerScreen<CatchPreview> catchPreview;
     private readonly PerScreen<FishingState> fishingState;
+    private readonly PerScreen<SeedFishInfoView> seedFishPreview;
     private readonly PerScreen<Splash?> splash = new();
     private readonly PerScreen<SpeechBubble<SplashInfoView>> splashOverlay =
         new(CreateSplashOverlay);
@@ -38,6 +41,7 @@ internal sealed class ModEntry : Mod
     public ModEntry()
     {
         catchPreview = new(() => new CatchPreview(() => config));
+        seedFishPreview = new(() => new SeedFishInfoView());
         fishingState = new(() =>
         {
             var state = new FishingState();
@@ -56,6 +60,7 @@ internal sealed class ModEntry : Mod
 
         Logger.Monitor = Monitor;
 
+        helper.Events.Display.RenderedHud += Display_RenderedHud;
         helper.Events.Display.RenderedStep += Display_RenderedStep;
         helper.Events.GameLoop.DayStarted += GameLoop_DayStarted;
         helper.Events.GameLoop.ReturnedToTitle += GameLoop_ReturnedToTitle;
@@ -134,6 +139,11 @@ internal sealed class ModEntry : Mod
         );
     }
 
+    private void Display_RenderedHud(object? sender, RenderedHudEventArgs e)
+    {
+        DrawSeedFishPreview(e.SpriteBatch);
+    }
+
     private void Display_RenderedStep(object? sender, RenderedStepEventArgs e)
     {
         if (!Context.IsWorldReady)
@@ -202,6 +212,7 @@ internal sealed class ModEntry : Mod
         }
         FishingState.Update(Game1.player.CurrentTool as FishingRod);
         CatchPreview.Update();
+        UpdateSeededRandomFishPreview();
     }
 
     private void Input_ButtonsChanged(object? sender, ButtonsChangedEventArgs e)
@@ -214,6 +225,10 @@ internal sealed class ModEntry : Mod
                 LogLevel.Debug
             );
             Helper.Input.SuppressActiveKeybinds(config.CatchPreviewToggleKeybind);
+        }
+        if (e.Pressed.Contains(SButton.F9))
+        {
+            CatchPreview.Update(true);
         }
     }
 
@@ -266,10 +281,39 @@ internal sealed class ModEntry : Mod
         }
     }
 
+    private void DrawSeedFishPreview(SpriteBatch spriteBatch)
+    {
+        if (
+            !CatchPreview.Enabled
+            || SeedFishPreview.FishId is null
+            || config.SeededRandomFishHudVisibility == SeededRandomFishHudVisibility.None
+            || (
+                config.SeededRandomFishHudVisibility
+                    != SeededRandomFishHudVisibility.CurrentAndFuture
+                && CatchPreview.SeededRandomCatchesRequired > 0
+            )
+        )
+        {
+            return;
+        }
+        SeedFishPreview.Measure(new(500, 500));
+        var position = GetViewportPosition(
+            config.SeededRandomFishHudLocation,
+            config.SeededRandomFishHudOffset,
+            SeedFishPreview.OuterSize.ToPoint()
+        );
+        var overlayBatch = new PropagatedSpriteBatch(
+            spriteBatch,
+            Transform.FromTranslation(position)
+        );
+        SeedFishPreview.Draw(overlayBatch);
+    }
+
     private void DrawSplashPreview(SpriteBatch spriteBatch)
     {
         if (
-            Splash is null
+            !CatchPreview.Enabled
+            || Splash is null
             || config.SplashPreviewVisibility == SplashPreviewVisibility.None
             || (
                 config.SplashPreviewVisibility != SplashPreviewVisibility.RemainingAndUpcoming
@@ -292,6 +336,25 @@ internal sealed class ModEntry : Mod
             Transform.FromTranslation(translation)
         );
         SplashOverlay.Draw(overlayBatch);
+    }
+
+    private static Vector2 GetViewportPosition(RectangleCorner corner, Point offset, Point size)
+    {
+        var deviceViewport = Game1.graphics.GraphicsDevice.Viewport;
+        var uiViewport = Game1.uiViewport;
+        var viewportWidth = Math.Min(deviceViewport.Width, uiViewport.Width);
+        var viewportHeight = Math.Min(deviceViewport.Height, uiViewport.Height);
+        return corner switch
+        {
+            RectangleCorner.TopLeft => new(offset.X, offset.Y),
+            RectangleCorner.TopRight => new(viewportWidth - offset.X - size.X, offset.Y),
+            RectangleCorner.BottomLeft => new(offset.X, viewportHeight - offset.Y - size.Y),
+            RectangleCorner.BottomRight => new(
+                viewportWidth - offset.X - size.X + 40,
+                viewportHeight - offset.Y - size.Y - 20
+            ),
+            _ => throw new ArgumentException($"Invalid corner value: {corner}", nameof(corner)),
+        };
     }
 
     private void RefreshForCurrentLocation()
@@ -320,6 +383,20 @@ internal sealed class ModEntry : Mod
             Splash = schedule.FirstOrDefault(s => s.StartTimeOfDay >= Game1.timeOfDay);
         }
         UpdateSplashOverlay();
+    }
+
+    private void UpdateSeededRandomFishPreview()
+    {
+        if (CatchPreview.SeededRandomFish.Count > 0)
+        {
+            SeedFishPreview.FishId = CatchPreview.SeededRandomFish[0].QualifiedItemId;
+            SeedFishPreview.CatchesRemaining = CatchPreview.SeededRandomCatchesRequired;
+        }
+        else
+        {
+            SeedFishPreview.FishId = null;
+            SeedFishPreview.CatchesRemaining = 0;
+        }
     }
 
     private void UpdateSplashOverlay()

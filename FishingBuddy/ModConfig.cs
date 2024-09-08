@@ -1,4 +1,5 @@
-﻿using StardewModdingAPI.Utilities;
+﻿using Microsoft.Xna.Framework;
+using StardewModdingAPI.Utilities;
 
 namespace FishingBuddy;
 
@@ -16,6 +17,54 @@ public enum CatchPreviewVisibility
     /// Previews are only visible when the player is using a fishing rod.
     /// </summary>
     OnlyWhenRodSelected,
+}
+
+/// <summary>
+/// Corners of a rectangular area, e.g. the screen.
+/// </summary>
+public enum RectangleCorner
+{
+    /// <summary>
+    /// The top left.
+    /// </summary>
+    TopLeft,
+
+    /// <summary>
+    /// The top right.
+    /// </summary>
+    TopRight,
+
+    /// <summary>
+    /// The bottom right.
+    /// </summary>
+    BottomRight,
+
+    /// <summary>
+    /// The bottom left.
+    /// </summary>
+    BottomLeft,
+}
+
+/// <summary>
+/// Visibility of the seeded-random fish HUD ("jelly indicator").
+/// </summary>
+public enum SeededRandomFishHudVisibility
+{
+    /// <summary>
+    /// Don't show the seeded-random fish HUD.
+    /// </summary>
+    None,
+
+    /// <summary>
+    /// Show the HUD only when the next catch can be a seeded-random fish.
+    /// </summary>
+    Current,
+
+    /// <summary>
+    /// Show the HUD whenever the player is in a location where seeded-random fish can spawn, and
+    /// if not spawnable on the next catch, include the number of remaining catches required.
+    /// </summary>
+    CurrentAndFuture,
 }
 
 /// <summary>
@@ -103,6 +152,31 @@ public class ModConfig
     /// actually updates) and will be rounded to the nearest multiple otherwise.
     /// </remarks>
     public int CatchUpdateInterval { get; set; } = 10;
+
+    /// <summary>
+    /// Specifies which corner of the screen should display seeded-random fish indicator (e.g. for
+    /// jellies).
+    /// </summary>
+    public RectangleCorner SeededRandomFishHudLocation { get; set; } = RectangleCorner.TopLeft;
+
+    /// <summary>
+    /// The offset in pixels from the <see cref="SeededRandomFishHudLocation"/> to display the
+    /// seeded-random HUD.
+    /// </summary>
+    /// <remarks>
+    /// Both X and Y values should be positive, and are interpreted relative to the location.
+    /// </remarks>
+    public Point SeededRandomFishHudOffset { get; set; } = new(0, 100);
+
+    /// <summary>
+    /// When the seeded-random fish HUD indicator is visible.
+    /// </summary>
+    /// <remarks>
+    /// Regardless of setting, this HUD will only be visible when fish previews in general are on,
+    /// i.e. via the <see cref="CatchPreviewToggleKeybind"/>.
+    /// </remarks>
+    public SeededRandomFishHudVisibility SeededRandomFishHudVisibility { get; set; } =
+        SeededRandomFishHudVisibility.CurrentAndFuture;
 
     /// <summary>
     /// Configures when splash previews (balloons over current/future bubble spots) are visible.
