@@ -209,7 +209,7 @@ internal class CatchPreview(Func<ModConfig> configSelector)
             return;
         }
         var possibleCatches = new List<ParsedItemData>();
-        var hasCuriosityLure = inputs.TackleIds.Contains("(O)856");
+        var hasCuriosityLure = CatchRules.HasCuriosityLure(inputs.TackleIds);
         foreach (var spawn in seededRandomSpawns)
         {
             float chance = spawn.GetChance(
@@ -227,16 +227,13 @@ internal class CatchPreview(Func<ModConfig> configSelector)
                 SeededRandomCatchesRequired >= 0
                     ? SeededRandomCatchesRequired
                     : SEEDED_RANDOM_ATTEMPTS;
-            for (int i = 0; i <= maxIterations; i++)
+            for (uint i = 0; i <= maxIterations; i++)
             {
-                var seedRandom = Utility.CreateRandom(
-                    Game1.uniqueIDForThisGame,
-                    (inputs.CatchCount + i) * 859
-                );
+                var seedRandom = CatchRules.GetSeededFishRandom(inputs.CatchCount + i);
                 if (seedRandom.NextBool(chance))
                 {
                     possibleCatches.Add(ItemRegistry.GetDataOrErrorItem(spawn.ItemId));
-                    SeededRandomCatchesRequired = i;
+                    SeededRandomCatchesRequired = (int)i;
                     break;
                 }
             }
@@ -266,7 +263,7 @@ internal class CatchPreview(Func<ModConfig> configSelector)
                 ? (
                     rod.QualifiedItemId,
                     rod.GetBait()?.QualifiedItemId,
-                    GetTargetFishId(rod.GetBait()),
+                    CatchRules.GetTargetFishId(rod.GetBait()),
                     rod.GetTackleQualifiedItemIDs()
                 )
                 : (null, null, null, []);
@@ -309,15 +306,6 @@ internal class CatchPreview(Func<ModConfig> configSelector)
                 && BaitId == other.BaitId
                 && BaitTargetFishId == other.BaitTargetFishId
                 && TackleIds.SequenceEqual(other.TackleIds);
-        }
-
-        private static string? GetTargetFishId(SObject? bait)
-        {
-            return
-                bait?.QualifiedItemId == "(O)SpecificBait"
-                && bait.preservedParentSheetIndex.Value is not null
-                ? "(O)" + bait.preservedParentSheetIndex.Value
-                : null;
         }
     }
 }
