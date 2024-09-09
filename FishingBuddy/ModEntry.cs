@@ -28,6 +28,7 @@ internal sealed class ModEntry : Mod
     private readonly Dictionary<string, IReadOnlyList<Splash>> splashSchedules = [];
 
     // Initialized in Entry
+    private static TimeAccelerator timeAccelerator = null!;
     private ModConfig config = null!;
 
     private readonly PerScreen<CatchPreview> catchPreview;
@@ -59,6 +60,8 @@ internal sealed class ModEntry : Mod
         config = helper.ReadConfig<ModConfig>();
 
         Logger.Monitor = Monitor;
+
+        timeAccelerator = new(() => config);
 
         helper.Events.Display.RenderedHud += Display_RenderedHud;
         helper.Events.Display.RenderedStep += Display_RenderedStep;
@@ -206,11 +209,14 @@ internal sealed class ModEntry : Mod
 
     private void GameLoop_UpdateTicked(object? sender, UpdateTickedEventArgs e)
     {
+        var rod = Game1.player.CurrentTool as FishingRod;
+        timeAccelerator.Active = IsEffectivelySinglePlayer() && FishingState.IsWaitingForBite();
+        timeAccelerator.Update(rod);
         if (!Context.IsWorldReady)
         {
             return;
         }
-        FishingState.Update(Game1.player.CurrentTool as FishingRod);
+        FishingState.Update(rod);
         CatchPreview.Update();
         UpdateSeededRandomFishPreview();
     }
@@ -355,6 +361,11 @@ internal sealed class ModEntry : Mod
             ),
             _ => throw new ArgumentException($"Invalid corner value: {corner}", nameof(corner)),
         };
+    }
+
+    private static bool IsEffectivelySinglePlayer()
+    {
+        return !Context.IsMultiplayer || (!Context.IsSplitScreen && !Context.HasRemotePlayers);
     }
 
     private void RefreshForCurrentLocation()

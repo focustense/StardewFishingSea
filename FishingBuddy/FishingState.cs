@@ -35,12 +35,22 @@ internal class FishingState
         Idle,
         Casting,
         Fishing,
+        Nibbling,
         Reeling,
         Cancelling,
         Catching,
     }
 
     private Status currentStatus = Status.Idle;
+
+    /// <summary>
+    /// Checks whether or not the player has cast a line and is waiting for a nibble/bite (i.e. not
+    /// yet reeling in).
+    /// </summary>
+    public bool IsWaitingForBite()
+    {
+        return currentStatus == Status.Fishing;
+    }
 
     /// <summary>
     /// Updates the state based on a selected fishing rod.
@@ -66,7 +76,15 @@ internal class FishingState
         {
             currentStatus = Status.Fishing;
         }
-        if (currentStatus == Status.Fishing && isReeling)
+        if (currentStatus == Status.Fishing && isNibbling)
+        {
+            currentStatus = Status.Nibbling;
+        }
+        else if (currentStatus == Status.Nibbling && !isNibbling && !isReeling)
+        {
+            currentStatus = Status.Fishing;
+        }
+        if ((currentStatus == Status.Fishing || currentStatus == Status.Nibbling) && isReeling)
         {
             currentStatus = Status.Reeling;
         }

@@ -154,6 +154,14 @@ public class ModConfig
     public int CatchUpdateInterval { get; set; } = 10;
 
     /// <summary>
+    /// Rate at which the game time will run while fishing (waiting for a bite).
+    /// </summary>
+    /// <remarks>
+    /// Single-player only.
+    /// </remarks>
+    public float FishingTimeScale { get; set; } = 4.0f;
+
+    /// <summary>
     /// Specifies which corner of the screen should display seeded-random fish indicator (e.g. for
     /// jellies).
     /// </summary>
