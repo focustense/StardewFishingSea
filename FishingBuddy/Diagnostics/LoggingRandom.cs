@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using FishingBuddy.Predictions;
 
 namespace FishingBuddy.Diagnostics;
 

@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
+using FishingBuddy.Predictions;
 using HarmonyLib;
 using StardewValley.GameData.Locations;
 
-namespace FishingBuddy;
+namespace FishingBuddy.Patches;
 
 internal static class LocationFishPatches
 {

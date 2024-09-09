@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 using HarmonyLib;
 using StardewValley.Internal;
 
-namespace FishingBuddy;
+namespace FishingBuddy.Patches;
 
 internal static class ItemQueryPatches
 {

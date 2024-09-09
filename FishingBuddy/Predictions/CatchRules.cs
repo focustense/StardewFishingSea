@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace FishingBuddy;
+namespace FishingBuddy.Predictions;
 
 /// <summary>
 /// Normally-hardcoded rules specific to fish catches.

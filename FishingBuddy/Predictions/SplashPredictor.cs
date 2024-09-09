@@ -2,7 +2,7 @@
 using StardewValley.Extensions;
 using StardewValley.Tools;
 
-namespace FishingBuddy;
+namespace FishingBuddy.Predictions;
 
 internal record Splash(Point Tile, int StartTimeOfDay, int EndTimeOfDay, string? FrenzyFishId);
 
@@ -18,7 +18,7 @@ internal static class SplashPredictor
 
     public static IEnumerable<Splash> PredictSplashes(GameLocation location)
     {
-        if (!location.IsOutdoors || (location is Farm && !SplashRules.AllowedOnFarm()))
+        if (!location.IsOutdoors || location is Farm && !SplashRules.AllowedOnFarm())
         {
             yield break;
         }
@@ -42,7 +42,7 @@ internal static class SplashPredictor
                 // we have to do the same.
                 var sample = random.NextDouble();
                 var threshold =
-                    SplashRules.SplashEndThreshold + (currentDuration / SplashRules.DurationWeight);
+                    SplashRules.SplashEndThreshold + currentDuration / SplashRules.DurationWeight;
                 if (sample < threshold && currentDuration > currentSplash.MinimumDuration)
                 {
                     yield return currentSplash.ToSplash(timeOfDay);

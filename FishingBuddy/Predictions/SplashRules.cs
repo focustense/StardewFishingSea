@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using StardewValley.Locations;
 
-namespace FishingBuddy;
+namespace FishingBuddy.Predictions;
 
 /// <summary>
 /// Normally-hardcoded rules specific to splash spots (fishing bubbles).

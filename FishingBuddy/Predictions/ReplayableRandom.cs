@@ -2,7 +2,7 @@
 using HarmonyLib;
 using StardewModdingAPI.Utilities;
 
-namespace FishingBuddy;
+namespace FishingBuddy.Predictions;
 
 /// <summary>
 /// <see cref="Random"/> implementation that derives from another random source, generally global

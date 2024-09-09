@@ -1,4 +1,6 @@
-﻿using FishingBuddy.UI;
+﻿using FishingBuddy.Patches;
+using FishingBuddy.Predictions;
+using FishingBuddy.UI;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

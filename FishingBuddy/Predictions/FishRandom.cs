@@ -1,6 +1,6 @@
 ﻿using StardewModdingAPI.Utilities;
 
-namespace FishingBuddy;
+namespace FishingBuddy.Predictions;
 
 /// <summary>
 /// Chooses the source of randomness for fishing-related functions.

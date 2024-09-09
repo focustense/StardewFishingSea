@@ -6,7 +6,7 @@ using StardewValley.GameData.Locations;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Tools;
 
-namespace FishingBuddy;
+namespace FishingBuddy.Predictions;
 
 /// <summary>
 /// Prediction of a single fish catch on a single tile.
@@ -112,7 +112,7 @@ internal class CatchPreview(Func<ModConfig> configSelector)
         )
         {
             bool snapshot =
-                forceImmediateUpdate || (!Frozen && minutesElapsed >= config.CatchUpdateInterval);
+                forceImmediateUpdate || !Frozen && minutesElapsed >= config.CatchUpdateInterval;
             UpdateRegularFish(inputs, config.CatchPreviewTileRadius, snapshot);
         }
         lastInputs = inputs;
