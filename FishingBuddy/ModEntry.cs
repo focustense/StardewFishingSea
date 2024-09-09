@@ -210,7 +210,10 @@ internal sealed class ModEntry : Mod
     private void GameLoop_UpdateTicked(object? sender, UpdateTickedEventArgs e)
     {
         var rod = Game1.player.CurrentTool as FishingRod;
-        timeAccelerator.Active = IsEffectivelySinglePlayer() && FishingState.IsWaitingForBite();
+        timeAccelerator.Active =
+            IsEffectivelySinglePlayer()
+            && Game1.CurrentEvent is null
+            && FishingState.IsWaitingForBite();
         timeAccelerator.Update(rod);
         if (!Context.IsWorldReady)
         {
