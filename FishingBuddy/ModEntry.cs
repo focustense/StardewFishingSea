@@ -16,6 +16,7 @@ namespace FishingBuddy;
 internal sealed class ModEntry : Mod
 {
     private CatchPreview CatchPreview => catchPreview.Value;
+    private ModConfig Config => configContainer.Config;
     private FishingState FishingState => fishingState.Value;
     private SeedFishInfoView SeedFishPreview => seedFishPreview.Value;
     private Splash? Splash
@@ -31,7 +32,7 @@ internal sealed class ModEntry : Mod
 
     // Initialized in Entry
     private static TimeAccelerator timeAccelerator = null!;
-    private ModConfig config = null!;
+    private ConfigurationContainer<ModConfig> configContainer = null!;
 
     private readonly PerScreen<CatchPreview> catchPreview;
     private readonly PerScreen<FishingState> fishingState;
@@ -43,7 +44,7 @@ internal sealed class ModEntry : Mod
     // Constructor is only to initialize certain lazy-loaders.
     public ModEntry()
     {
-        catchPreview = new(() => new CatchPreview(() => config));
+        catchPreview = new(() => new CatchPreview(() => Config));
         seedFishPreview = new(() => new SeedFishInfoView());
         fishingState = new(() =>
         {
@@ -59,11 +60,11 @@ internal sealed class ModEntry : Mod
     public override void Entry(IModHelper helper)
     {
         I18n.Init(helper.Translation);
-        config = helper.ReadConfig<ModConfig>();
+        configContainer = new(helper);
 
         Logger.Monitor = Monitor;
 
-        timeAccelerator = new(() => config);
+        timeAccelerator = new(() => Config);
 
         helper.Events.Display.RenderedHud += Display_RenderedHud;
         helper.Events.Display.RenderedStep += Display_RenderedStep;
@@ -165,7 +166,7 @@ internal sealed class ModEntry : Mod
     private void FishingState_Cancelled(object? sender, EventArgs e)
     {
         CatchPreview.Frozen = false;
-        if (config.CatchResetOnCancel)
+        if (Config.CatchResetOnCancel)
         {
             CatchPreview.Update(forceImmediateUpdate: true);
         }
@@ -173,7 +174,7 @@ internal sealed class ModEntry : Mod
 
     private void FishingState_Cast(object? sender, EventArgs e)
     {
-        if (config.CatchFreezeOnCast)
+        if (Config.CatchFreezeOnCast)
         {
             CatchPreview.Frozen = true;
         }
@@ -211,6 +212,7 @@ internal sealed class ModEntry : Mod
 
     private void GameLoop_UpdateTicked(object? sender, UpdateTickedEventArgs e)
     {
+        AnimationRunner.Tick(Game1.currentGameTime.ElapsedGameTime);
         var rod = Game1.player.CurrentTool as FishingRod;
         timeAccelerator.Active =
             IsEffectivelySinglePlayer()
@@ -228,16 +230,24 @@ internal sealed class ModEntry : Mod
 
     private void Input_ButtonsChanged(object? sender, ButtonsChangedEventArgs e)
     {
-        if (config.CatchPreviewToggleKeybind.JustPressed())
+        if (Config.CatchPreviewToggleKeybind.JustPressed())
         {
             CatchPreview.Enabled = !CatchPreview.Enabled;
             Monitor.Log(
                 "Fish catch previews " + (CatchPreview.Enabled ? "enabled" : "disabled"),
                 LogLevel.Debug
             );
-            Helper.Input.SuppressActiveKeybinds(config.CatchPreviewToggleKeybind);
+            Helper.Input.SuppressActiveKeybinds(Config.CatchPreviewToggleKeybind);
         }
-        if (e.Pressed.Contains(SButton.F9))
+        else if (
+            e.Pressed.Contains(SButton.F7)
+            && Context.IsPlayerFree
+            && Game1.activeClickableMenu is null
+        )
+        {
+            Game1.activeClickableMenu = new SettingsMenu(configContainer);
+        }
+        else if (e.Pressed.Contains(SButton.F9))
         {
             CatchPreview.Update(true);
         }
@@ -269,7 +279,7 @@ internal sealed class ModEntry : Mod
             !CatchPreview.Enabled
             || !Game1.currentLocation.canFishHere()
             || (
-                config.CatchPreviewVisibility == CatchPreviewVisibility.OnlyWhenRodSelected
+                Config.CatchPreviewVisibility == CatchPreviewVisibility.OnlyWhenRodSelected
                 && Game1.player.CurrentTool is not FishingRod
             )
         )
@@ -297,9 +307,9 @@ internal sealed class ModEntry : Mod
         if (
             !CatchPreview.Enabled
             || SeedFishPreview.FishId is null
-            || config.SeededRandomFishHudVisibility == SeededRandomFishHudVisibility.None
+            || Config.SeededRandomFishHudVisibility == SeededRandomFishHudVisibility.None
             || (
-                config.SeededRandomFishHudVisibility
+                Config.SeededRandomFishHudVisibility
                     != SeededRandomFishHudVisibility.CurrentAndFuture
                 && CatchPreview.SeededRandomCatchesRequired > 0
             )
@@ -309,8 +319,8 @@ internal sealed class ModEntry : Mod
         }
         SeedFishPreview.Measure(new(500, 500));
         var position = GetViewportPosition(
-            config.SeededRandomFishHudLocation,
-            config.SeededRandomFishHudOffset,
+            Config.SeededRandomFishHudLocation,
+            Config.SeededRandomFishHudOffset,
             SeedFishPreview.OuterSize.ToPoint()
         );
         var overlayBatch = new PropagatedSpriteBatch(
@@ -325,9 +335,9 @@ internal sealed class ModEntry : Mod
         if (
             !CatchPreview.Enabled
             || Splash is null
-            || config.SplashPreviewVisibility == SplashPreviewVisibility.None
+            || Config.SplashPreviewVisibility == SplashPreviewVisibility.None
             || (
-                config.SplashPreviewVisibility != SplashPreviewVisibility.RemainingAndUpcoming
+                Config.SplashPreviewVisibility != SplashPreviewVisibility.RemainingAndUpcoming
                 && Splash.StartTimeOfDay > Game1.timeOfDay
             )
         )

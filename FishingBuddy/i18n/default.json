@@ -1,3 +1,23 @@
 {
-  "ExampleKey": "Example text"
+  "Settings.ModTitle": "A Fishing Sea",
+  "Settings.ModDescription": "\"Catching you will make me the most famous fisherman there is, right up there with the bald guy on the cable fishing show.\"",
+  "Settings.Difficulty.Heading": "Difficulty",
+  "Settings.Difficulty.Easy.Title": "Carp",
+  "Settings.Difficulty.Easy.Description": "Enable all predictions and other features immediately; no special requirements.",
+  "Settings.Difficulty.Medium.Title": "Catfish",
+  "Settings.Difficulty.Medium.Description": "Balanced for early-game progression; predictions will be useful when you need them most, but you'll have to invest.",
+  "Settings.Difficulty.Hard.Title": "Legend",
+  "Settings.Difficulty.Hard.Description": "Most features require high-level perks or fishing mastery.",
+  "Settings.Difficulty.Custom.Title": "Custom",
+  "Settings.Difficulty.Custom.Description": "Tweak all individual scaling settings to suit your personal preferences.",
+  "Settings.Time.Heading": "Time Scale",
+  "Settings.Time.FishingSpeedup.Title": "Waiting Speed",
+  "Settings.Time.FishingSpeedup.Description": "Time flies when you're having fun. The bite rate is not changed, but the game will fast-forward until you get a bite. Only active in single-player.",
+  "Settings.Time.FishingSpeedup.ValueFormat": "{{value}}x",
+  "Settings.Time.RerollInterval.Title": "Respawn Interval",
+  "Settings.Time.RerollInterval.Description": "Number of in-game minutes between fish spawn changes. Lower values mean less waiting around for the fish you want, but may make it harder to catch them in time!",
+  "Settings.Time.RerollInterval.ValueFormat": "{{value}} minutes",
+  "Settings.UI.Heading": "User Interface",
+  "Settings.UI.HudLocation.Title": "HUD Location",
+  "Settings.UI.HudLocation.Description": "Where the jelly indicator HUD will be shown on screen. Click and drag on the TV to position precisely."
 }
