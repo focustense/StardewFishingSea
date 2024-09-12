@@ -1,4 +1,6 @@
-﻿using StardewUI;
+﻿using FishingBuddy.Configuration;
+using FishingBuddy.Data;
+using StardewUI;
 
 namespace FishingBuddy.UI;
 
@@ -6,8 +8,39 @@ namespace FishingBuddy.UI;
 /// Mod configuration view; used in place of GMCM page.
 /// </summary>
 /// <param name="configContainer">Configuration container for the mod.</param>
-internal class SettingsView(IConfigurationContainer<ModConfig> configContainer) : WrapperView
+internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> configContainer)
+    : WrapperView
 {
+    private readonly RuleSet customRuleSet =
+        new()
+        {
+            Title = I18n.Settings_Difficulty_Custom_Title(),
+            Description = I18n.Settings_Difficulty_Custom_Description(),
+            SpriteItemId = "(O)128",
+        };
+
+    private readonly Lane ruleSetLane =
+        new()
+        {
+            Layout = LayoutParameters.FitContent(),
+            Margin = new(Left: 16),
+            Orientation = Orientation.Horizontal,
+        };
+
+    private readonly Lane rulesLane =
+        new()
+        {
+            Layout = LayoutParameters.AutoRow(),
+            Margin = new(Left: 16, Top: 16),
+            Orientation = Orientation.Vertical,
+        };
+
+    private RuleSet selectedRuleSet = configContainer.Config.Rules.Clone();
+    private string selectedRuleSetName = configContainer.Config.RuleSetName;
+
+    // Initialized in CreateView
+    private RulesForm rulesForm = null!;
+
     protected override IView CreateView()
     {
         var config = configContainer.Config;
@@ -25,50 +58,18 @@ internal class SettingsView(IConfigurationContainer<ModConfig> configContainer) 
             Text = I18n.Settings_ModDescription(),
             Color = Colors.MutedText,
         };
-        var difficultyLane = new Lane()
-        {
-            Layout = LayoutParameters.FitContent(),
-            Margin = new(Left: 16),
-            Orientation = Orientation.Horizontal,
-            Children =
-            [
-                CreateDifficultyButton(
-                    I18n.Settings_Difficulty_Easy_Title(),
-                    I18n.Settings_Difficulty_Easy_Description(),
-                    "(O)142"
-                ),
-                CreateDifficultyButton(
-                    I18n.Settings_Difficulty_Medium_Title(),
-                    I18n.Settings_Difficulty_Medium_Description(),
-                    "(O)143"
-                ),
-                CreateDifficultyButton(
-                    I18n.Settings_Difficulty_Hard_Title(),
-                    I18n.Settings_Difficulty_Hard_Description(),
-                    "(O)163"
-                ),
-                CreateDifficultyButton(
-                    I18n.Settings_Difficulty_Custom_Title(),
-                    I18n.Settings_Difficulty_Custom_Description(),
-                    "(O)128"
-                ),
-            ],
-        };
-        var rulesLane = new Lane()
-        {
-            Layout = LayoutParameters.AutoRow(),
-            Margin = new(Left: 16, Top: 16),
-            Orientation = Orientation.Vertical,
-            Children =
-            [
-                CreateBulletPoint("Bubble durations are visible with Fisher profession"),
-                CreateBulletPoint("Upcoming bubbles are visible with Angler profession"),
-                CreateBulletPoint("Fish predictions require equipped Sonar Bobber"),
-                CreateBulletPoint("Jelly predictions require equipped Sonar Bobber"),
-                CreateBulletPoint("Outcomes cannot change while the line is cast"),
-                CreateBulletPoint("Fish are not rerolled after a cancelled cast"),
-            ],
-        };
+        ruleSetLane.Children = data
+            .RuleSets.Select(kv => new RuleSetButton(kv.Key, kv.Value))
+            .Append(new("", customRuleSet))
+            .Select(ruleSetButton =>
+            {
+                ruleSetButton.Click += RuleSetButton_Click;
+                return ruleSetButton as IView;
+            })
+            .ToList();
+        UpdateRuleSetButtons();
+        rulesForm = new RulesForm(data, customRuleSet, 300);
+        UpdateRules();
         var speedupSlider = new Slider()
         {
             TrackWidth = 300,
@@ -85,7 +86,7 @@ internal class SettingsView(IConfigurationContainer<ModConfig> configContainer) 
             Min = 10f,
             Max = 300f,
             Interval = 10f,
-            Value = config.CatchUpdateInterval,
+            Value = config.RespawnInterval,
             ValueColor = Colors.MutedText,
             ValueFormat = v => I18n.Settings_Time_RerollInterval_ValueFormat((int)v),
         };
@@ -121,8 +122,8 @@ internal class SettingsView(IConfigurationContainer<ModConfig> configContainer) 
             Children =
             [
                 descriptionLabel,
-                CreateSectionHeading(I18n.Settings_Difficulty_Heading()),
-                difficultyLane,
+                FormBuilder.CreateSectionHeading(I18n.Settings_Difficulty_Heading()),
+                ruleSetLane,
                 rulesLane,
                 form,
             ],
@@ -161,49 +162,6 @@ internal class SettingsView(IConfigurationContainer<ModConfig> configContainer) 
             Margin = new(Bottom: 8),
             VerticalContentAlignment = Alignment.Middle,
             Children = [bullet, label],
-        };
-    }
-
-    private IView CreateDifficultyButton(string title, string description, string iconItemId)
-    {
-        var icon = new Image()
-        {
-            Layout = LayoutParameters.FixedSize(80, 80),
-            Margin = new(Bottom: 8),
-            Sprite = Sprites.Item(iconItemId),
-        };
-        var label = Label.Simple(title);
-        var content = new Lane()
-        {
-            Layout = LayoutParameters.FitContent(),
-            Orientation = Orientation.Vertical,
-            HorizontalContentAlignment = Alignment.Middle,
-            Children = [icon, label],
-        };
-        var backgroundTint = iconItemId == "(O)143" ? Color.LightBlue : Color.Transparent;
-        var selectionFrame = new Frame()
-        {
-            Layout = new()
-            {
-                Width = Length.Content(),
-                Height = Length.Content(),
-                MinWidth = 120,
-            },
-            Padding = new(12),
-            Background = new(Game1.staminaRect),
-            BackgroundTint = backgroundTint,
-            HorizontalContentAlignment = Alignment.Middle,
-            Content = content,
-        };
-        return new Frame()
-        {
-            Layout = LayoutParameters.FitContent(),
-            Background = Sprites.ThinBorder,
-            Margin = new(Right: 32),
-            Padding = new(4),
-            IsFocusable = true,
-            Tooltip = description,
-            Content = selectionFrame,
         };
     }
 
@@ -267,8 +225,98 @@ internal class SettingsView(IConfigurationContainer<ModConfig> configContainer) 
         };
     }
 
-    private IView CreateSectionHeading(string text)
+    private IView? CreateRuleRow(string featureTitle, string conditionName, bool asVisibility)
     {
-        return new Banner() { Margin = new(Top: 16, Bottom: 8), Text = text };
+        if (!data.FeatureConditions.TryGetValue(conditionName, out var condition))
+        {
+            return null;
+        }
+        var text = asVisibility
+            ? I18n.Settings_Rules_RuleTemplate_Visibility(
+                featureTitle,
+                condition.VisibilityRuleText
+            )
+            : I18n.Settings_Rules_RuleTemplate_Required(
+                featureTitle,
+                condition.RequirementRuleText
+            );
+        return CreateBulletPoint(text);
+    }
+
+    private void RuleSetButton_Click(object? sender, ClickEventArgs e)
+    {
+        if (sender is not RuleSetButton button || button.IsSelected)
+        {
+            return;
+        }
+        Game1.playSound("drumkit6");
+        selectedRuleSetName = button.Key;
+        selectedRuleSet = button.RuleSet;
+        UpdateRuleSetButtons();
+        UpdateRules();
+    }
+
+    private void UpdateReadOnlyRules(RuleSet ruleSet)
+    {
+        var currentBubblesRow = CreateRuleRow(
+            I18n.Settings_Rules_CurrentBubbles_Title(),
+            ruleSet.CurrentBubbles,
+            true
+        );
+        var futureBubblesRow = CreateRuleRow(
+            I18n.Settings_Rules_FutureBubbles_Title(),
+            ruleSet.FutureBubbles,
+            true
+        );
+        var fishPredictionsRow = CreateRuleRow(
+            I18n.Settings_Rules_FishPredictions_Title(),
+            ruleSet.FishPredictions,
+            false
+        );
+        var jellyPredictionsRow = CreateRuleRow(
+            I18n.Settings_Rules_JellyPredictions_Title(),
+            ruleSet.JellyPredictions,
+            false
+        );
+        var freezeRow = CreateBulletPoint(
+            ruleSet.FreezeOnCast
+                ? I18n.Settings_Rules_FreezeOnCast_Enabled()
+                : I18n.Settines_Rules_FreezeOnCast_Disabled()
+        );
+        var respawnRow = CreateBulletPoint(
+            ruleSet.RespawnOnCancel
+                ? I18n.Settings_Rules_RespawnOnCancel_Enabled()
+                : I18n.Settings_Rules_RespawnOnCancel_Disabled()
+        );
+        IView?[] allRows =
+        [
+            currentBubblesRow,
+            futureBubblesRow,
+            fishPredictionsRow,
+            jellyPredictionsRow,
+            freezeRow,
+            respawnRow,
+        ];
+        rulesLane.Children = allRows.Where(row => row is not null).Select(row => row!).ToList();
+    }
+
+    private void UpdateRules()
+    {
+        if (selectedRuleSet == customRuleSet)
+        {
+            rulesLane.Children = [rulesForm];
+        }
+        else
+        {
+            UpdateReadOnlyRules(selectedRuleSet);
+        }
+    }
+
+    private void UpdateRuleSetButtons()
+    {
+        foreach (var ruleSetButton in ruleSetLane.Children.OfType<RuleSetButton>())
+        {
+            ruleSetButton.IsSelected = ruleSetButton.Key == selectedRuleSetName;
+        }
     }
 }

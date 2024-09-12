@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using FishingBuddy.Configuration;
 using Microsoft.Xna.Framework;
 using StardewValley.Extensions;
 using StardewValley.GameData;
@@ -108,11 +109,11 @@ internal class CatchPreview(Func<ModConfig> configSelector)
         if (
             forceImmediateUpdate
             || !inputs.SameForRegularCatches(lastInputs)
-            || minutesElapsed >= config.CatchUpdateInterval
+            || minutesElapsed >= config.RespawnInterval
         )
         {
             bool snapshot =
-                forceImmediateUpdate || !Frozen && minutesElapsed >= config.CatchUpdateInterval;
+                forceImmediateUpdate || !Frozen && minutesElapsed >= config.RespawnInterval;
             UpdateRegularFish(inputs, config.CatchPreviewTileRadius, snapshot);
         }
         lastInputs = inputs;

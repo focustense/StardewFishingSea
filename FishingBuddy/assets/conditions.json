@@ -1,0 +1,31 @@
+{
+  "Always": {
+    "query": "TRUE",
+    // These aren't used for built-in conditions. Other mods adding content patches with new
+    // conditions must provide localized strings for the fields below.
+    "title": "",
+    "requirementRuleText": "",
+    "visibilityRuleText": ""
+  },
+  "Never": {
+    "query": "FALSE"
+  },
+  "FishingLevel5": {
+    "query": "PLAYER_FISHING_LEVEL Current 5"
+  },
+  "FishingLevel10": {
+    "query": "PLAYER_FISHING_LEVEL Current 10"
+  },
+  "FisherProfession": {
+    "query": "PLAYER_HAS_PROFESSION Current 6"
+  },
+  "AnglerProfession": {
+    "query": "PLAYER_HAS_PROFESSION Current 8"
+  },
+  "FishingMastery": {
+    "query": "PLAYER_STAT Current mastery_1 1"
+  },
+  "SonarBobber": {
+    "query": "{{ModId}}_PLAYER_USING_TACKLE Current (O)SonarBobber"
+  }
+}

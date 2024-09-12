@@ -1,3 +1,5 @@
+﻿using FishingBuddy.Configuration;
+using FishingBuddy.Data;
 using FishingBuddy.Patches;
 using FishingBuddy.Predictions;
 using FishingBuddy.UI;
@@ -6,8 +8,6 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewUI;
-using StardewValley.Internal;
-using StardewValley.Locations;
 using StardewValley.Tools;
 
 namespace FishingBuddy;
@@ -16,6 +16,7 @@ internal sealed class ModEntry : Mod
 {
     private CatchPreview CatchPreview => catchPreview.Value;
     private ModConfig Config => configContainer.Config;
+    private RuleSet CurrentRules => configContainer.Config.Rules;
     private FishingState FishingState => fishingState.Value;
     private SeedFishInfoView SeedFishPreview => seedFishPreview.Value;
     private Splash? Splash
@@ -30,8 +31,9 @@ internal sealed class ModEntry : Mod
     private readonly Dictionary<string, IReadOnlyList<Splash>> splashSchedules = [];
 
     // Initialized in Entry
-    private static TimeAccelerator timeAccelerator = null!;
     private ConfigurationContainer<ModConfig> configContainer = null!;
+    private ModData data = null!;
+    private static TimeAccelerator timeAccelerator = null!;
 
     private readonly PerScreen<CatchPreview> catchPreview;
     private readonly PerScreen<FishingState> fishingState;
@@ -59,11 +61,11 @@ internal sealed class ModEntry : Mod
     public override void Entry(IModHelper helper)
     {
         I18n.Init(helper.Translation);
+        data = new(helper);
         configContainer = new(helper);
+        timeAccelerator = new(() => Config);
 
         Logger.Monitor = Monitor;
-
-        timeAccelerator = new(() => Config);
 
         helper.Events.Display.RenderedHud += Display_RenderedHud;
         helper.Events.Display.RenderedStep += Display_RenderedStep;
@@ -75,6 +77,10 @@ internal sealed class ModEntry : Mod
         helper.Events.Player.Warped += Player_Warped;
 
         Patcher.ApplyAll(ModManifest.UniqueID);
+
+        GameStateQuery.Register(
+            $"{ModManifest.UniqueID}_PLAYER_USING_TACKLE",
+            Queries.PLAYER_USING_TACKLE
         );
     }
 
@@ -92,6 +98,9 @@ internal sealed class ModEntry : Mod
         if (e.Step == StardewValley.Mods.RenderSteps.World_Background)
         {
             DrawCatchPreviews(e.SpriteBatch);
+        }
+        else if (e.Step == StardewValley.Mods.RenderSteps.World_AlwaysFront)
+        {
             DrawSplashPreview(e.SpriteBatch);
         }
     }
@@ -99,7 +108,7 @@ internal sealed class ModEntry : Mod
     private void FishingState_Cancelled(object? sender, EventArgs e)
     {
         CatchPreview.Frozen = false;
-        if (Config.CatchResetOnCancel)
+        if (CurrentRules.RespawnOnCancel)
         {
             CatchPreview.Update(forceImmediateUpdate: true);
         }
@@ -107,7 +116,7 @@ internal sealed class ModEntry : Mod
 
     private void FishingState_Cast(object? sender, EventArgs e)
     {
-        if (Config.CatchFreezeOnCast)
+        if (CurrentRules.FreezeOnCast)
         {
             CatchPreview.Frozen = true;
         }
@@ -178,7 +187,7 @@ internal sealed class ModEntry : Mod
             && Game1.activeClickableMenu is null
         )
         {
-            Game1.activeClickableMenu = new SettingsMenu(configContainer);
+            Game1.activeClickableMenu = new SettingsMenu(data, configContainer);
         }
         else if (e.Pressed.Contains(SButton.F9))
         {
@@ -201,6 +210,13 @@ internal sealed class ModEntry : Mod
         splashSchedules.Add(location.NameOrUniqueName, splashes);
     }
 
+    private bool CheckRuleCondition(Func<RuleSet, string> conditionNameSelector)
+    {
+        var conditionName = conditionNameSelector(CurrentRules);
+        return data.FeatureConditions.TryGetValue(conditionName, out var condition)
+            && GameStateQuery.CheckConditions(condition.Query);
+    }
+
     private static SpeechBubble<SplashInfoView> CreateSplashOverlay()
     {
         return new() { Content = new SplashInfoView() };
@@ -211,10 +227,8 @@ internal sealed class ModEntry : Mod
         if (
             !CatchPreview.Enabled
             || !Game1.currentLocation.canFishHere()
-            || (
-                Config.CatchPreviewVisibility == CatchPreviewVisibility.OnlyWhenRodSelected
-                && Game1.player.CurrentTool is not FishingRod
-            )
+            || Game1.player.CurrentTool is not FishingRod
+            || !CheckRuleCondition(rules => rules.FishPredictions)
         )
         {
             return;
@@ -240,12 +254,7 @@ internal sealed class ModEntry : Mod
         if (
             !CatchPreview.Enabled
             || SeedFishPreview.FishId is null
-            || Config.SeededRandomFishHudVisibility == SeededRandomFishHudVisibility.None
-            || (
-                Config.SeededRandomFishHudVisibility
-                    != SeededRandomFishHudVisibility.CurrentAndFuture
-                && CatchPreview.SeededRandomCatchesRequired > 0
-            )
+            || !CheckRuleCondition(rules => rules.JellyPredictions)
         )
         {
             return;
@@ -268,10 +277,13 @@ internal sealed class ModEntry : Mod
         if (
             !CatchPreview.Enabled
             || Splash is null
-            || Config.SplashPreviewVisibility == SplashPreviewVisibility.None
             || (
-                Config.SplashPreviewVisibility != SplashPreviewVisibility.RemainingAndUpcoming
-                && Splash.StartTimeOfDay > Game1.timeOfDay
+                Splash.StartTimeOfDay <= Game1.timeOfDay
+                && !CheckRuleCondition(rules => rules.CurrentBubbles)
+            )
+            || (
+                Splash.StartTimeOfDay > Game1.timeOfDay
+                && !CheckRuleCondition(rules => rules.FutureBubbles)
             )
         )
         {

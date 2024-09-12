@@ -1,4 +1,5 @@
-﻿using StardewValley.Tools;
+﻿using FishingBuddy.Configuration;
+using StardewValley.Tools;
 
 namespace FishingBuddy;
 
@@ -80,7 +81,7 @@ internal class TimeAccelerator(Func<ModConfig> config)
         previousProgress = Game1.gameTimeInterval = (int)MathF.Round(nextProgress);
     }
 
-    private void AdjustNpcSpeeds(float multiplier)
+    private static void AdjustNpcSpeeds(float multiplier)
     {
         foreach (var npcName in Game1.characterData.Keys)
         {

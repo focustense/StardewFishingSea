@@ -1,4 +1,5 @@
-﻿using StardewUI;
+﻿using FishingBuddy.Configuration;
+using StardewUI;
 using StardewValley.TerrainFeatures;
 
 namespace FishingBuddy.UI;

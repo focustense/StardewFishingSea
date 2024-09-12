@@ -1,4 +1,4 @@
-﻿namespace FishingBuddy;
+﻿namespace FishingBuddy.Configuration;
 
 /// <summary>
 /// Container for the mod configuration; used for GMCM, etc.

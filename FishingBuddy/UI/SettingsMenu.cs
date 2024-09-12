@@ -1,4 +1,6 @@
-﻿using StardewUI;
+﻿using FishingBuddy.Configuration;
+using FishingBuddy.Data;
+using StardewUI;
 
 namespace FishingBuddy.UI;
 
@@ -6,11 +8,11 @@ namespace FishingBuddy.UI;
 /// Menu for the mod configuration.
 /// </summary>
 /// <param name="configContainer">Configuration container for the mod.</param>
-internal class SettingsMenu(IConfigurationContainer<ModConfig> configContainer)
+internal class SettingsMenu(ModData data, IConfigurationContainer<ModConfig> configContainer)
     : ViewMenu<SettingsView>
 {
     protected override SettingsView CreateView()
     {
-        return new(configContainer);
+        return new(data, configContainer);
     }
 }

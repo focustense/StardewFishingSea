@@ -1,0 +1,30 @@
+{
+  "easy": {
+    "description": "", // Content packs adding new rulesets need to provide a localized string here, e.g. {{i18n: key}} token for CP.
+    "spriteItemId": "(O)142",
+    "currentBubbles": "Always",
+    "futureBubbles": "Always",
+    "fishPredictions": "Always",
+    "jellyPredictions": "Always",
+    "freezeOnCast": true,
+    "respawnOnCancel": true
+  },
+  "medium": {
+    "spriteItemId": "(O)143",
+    "currentBubbles": "Always",
+    "futureBubbles": "FisherProfession",
+    "fishPredictions": "SonarBobber",
+    "jellyPredictions": "SonarBobber",
+    "freezeOnCast": true,
+    "respawnOnCancel": true
+  },
+  "hard": {
+    "spriteItemId": "(O)163",
+    "currentBubbles": "FisherProfession",
+    "futureBubbles": "AnglerProfession",
+    "fishPredictions": "FishingMastery",
+    "jellyPredictions": "FishingMastery",
+    "freezeOnCast": false,
+    "respawnOnCancel": false
+  }
+}
