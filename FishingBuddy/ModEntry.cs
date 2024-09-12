@@ -1,7 +1,6 @@
-﻿using FishingBuddy.Patches;
+using FishingBuddy.Patches;
 using FishingBuddy.Predictions;
 using FishingBuddy.UI;
-using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
@@ -75,73 +74,7 @@ internal sealed class ModEntry : Mod
         helper.Events.Input.ButtonsChanged += Input_ButtonsChanged;
         helper.Events.Player.Warped += Player_Warped;
 
-        var harmony = new Harmony(ModManifest.UniqueID);
-        // ItemQueryResolver.TryResolve has an apparent bug in one of its overloads that goes
-        // directly to Game1.random instead of using context.Random which would point to the
-        // replayable instance. Patch it to use the context.
-        var itemQueryTryResolveMethod = AccessTools.Method(
-            typeof(ItemQueryResolver),
-            nameof(ItemQueryResolver.TryResolve),
-            [
-                typeof(string), // query
-                typeof(ItemQueryContext),
-                typeof(ItemQuerySearchMode),
-                typeof(string), // perItemCondition
-                typeof(int?), // maxItems
-                typeof(bool), // avoidRepeat
-                typeof(HashSet<string>), // avoidItemIds
-                typeof(Action<string, string>), // logError
-            ]
-        );
-        harmony.Patch(
-            itemQueryTryResolveMethod,
-            transpiler: new(typeof(ItemQueryPatches), nameof(ItemQueryPatches.TryResolveTranspiler))
-        );
-        // GetFishFromLocation data is public, but the overload containing the real
-        // implementation is internal.
-        var getFishFromLocationDataMethod = AccessTools.Method(
-            typeof(GameLocation),
-            nameof(GameLocation.GetFishFromLocationData),
-            [
-                typeof(string), // locationName
-                typeof(Vector2), // bobberTile
-                typeof(int), // waterDepth
-                typeof(Farmer), // player
-                typeof(bool), // isTutorialCatch
-                typeof(bool), // isInherited
-                typeof(GameLocation),
-                typeof(ItemQueryContext),
-            ]
-        );
-        var allGameRandomRefsTranspilerMethod = new HarmonyMethod(
-            typeof(LocationFishPatches),
-            nameof(LocationFishPatches.AllGameRandomRefsTranspiler)
-        );
-        harmony.Patch(getFishFromLocationDataMethod, transpiler: allGameRandomRefsTranspilerMethod);
-        harmony.Patch(
-            AccessTools.Method(typeof(GameLocation), "CheckGenericFishRequirements"),
-            transpiler: allGameRandomRefsTranspilerMethod
-        );
-        var orderings = LocationFishPatches.GetOrderByMethods(getFishFromLocationDataMethod);
-        foreach (var orderMethod in orderings)
-        {
-            harmony.Patch(orderMethod, transpiler: allGameRandomRefsTranspilerMethod);
-        }
-        harmony.Patch(
-            AccessTools.Method(
-                typeof(MineShaft),
-                nameof(MineShaft.getFish),
-                [
-                    typeof(float), // millisecondsAfterNibble
-                    typeof(string), // bait
-                    typeof(int), // waterDepth
-                    typeof(Farmer),
-                    typeof(double), // baitPotency
-                    typeof(Vector2), // bobberTile
-                    typeof(string), // locationName
-                ]
-            ),
-            transpiler: allGameRandomRefsTranspilerMethod
+        Patcher.ApplyAll(ModManifest.UniqueID);
         );
     }
 
