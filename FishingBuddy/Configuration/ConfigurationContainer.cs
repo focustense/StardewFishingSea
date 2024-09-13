@@ -12,9 +12,9 @@ public interface IConfigurationContainer<T>
     T Config { get; }
 
     /// <summary>
-    /// Resets the configuration to default settings.
+    /// Gets a new instance of the configuration data holding the default settings.
     /// </summary>
-    void Reset();
+    T GetDefault();
 
     /// <summary>
     /// Saves the current <see cref="Config"/> to disk.
@@ -32,9 +32,9 @@ public class ConfigurationContainer<T>(IModHelper helper) : IConfigurationContai
 {
     public T Config { get; private set; } = helper.ReadConfig<T>();
 
-    public void Reset()
+    public T GetDefault()
     {
-        Config = new();
+        return new();
     }
 
     public void Save()

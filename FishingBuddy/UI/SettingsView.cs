@@ -11,12 +11,28 @@ namespace FishingBuddy.UI;
 internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> configContainer)
     : WrapperView
 {
+    private const int SLIDER_WIDTH = 300;
+
+    private ModConfig Config => configContainer.Config;
+
     private readonly RuleSet customRuleSet =
         new()
         {
             Title = I18n.Settings_Difficulty_Custom_Title(),
             Description = I18n.Settings_Difficulty_Custom_Description(),
             SpriteItemId = "(O)128",
+        };
+
+    private readonly Slider previewRadiusSlider =
+        new()
+        {
+            TrackWidth = SLIDER_WIDTH,
+            Min = 2,
+            Max = 20,
+            Interval = 1f,
+            Value = configContainer.Config.CatchPreviewTileRadius,
+            ValueColor = Colors.MutedText,
+            ValueFormat = v => I18n.Settings_UI_CatchPreviewRadius_ValueFormat(v),
         };
 
     private readonly Lane ruleSetLane =
@@ -35,6 +51,30 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
             Orientation = Orientation.Vertical,
         };
 
+    private readonly Slider spawnIntervalSlider =
+        new()
+        {
+            TrackWidth = SLIDER_WIDTH,
+            Min = 10f,
+            Max = 300f,
+            Interval = 10f,
+            Value = configContainer.Config.RespawnInterval,
+            ValueColor = Colors.MutedText,
+            ValueFormat = v => I18n.Settings_Time_RerollInterval_ValueFormat((int)v),
+        };
+
+    private readonly Slider speedupSlider =
+        new()
+        {
+            TrackWidth = SLIDER_WIDTH,
+            Min = 1f,
+            Max = 20f,
+            Interval = 1f,
+            Value = configContainer.Config.FishingTimeScale,
+            ValueColor = Colors.MutedText,
+            ValueFormat = v => I18n.Settings_Time_FishingSpeedup_ValueFormat(v),
+        };
+
     private RuleSet selectedRuleSet = configContainer.Config.Rules.Clone();
     private string selectedRuleSetName = configContainer.Config.RuleSetName;
 
@@ -43,7 +83,6 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
 
     protected override IView CreateView()
     {
-        var config = configContainer.Config;
         var header = CreateHeader();
         var separator = new Image()
         {
@@ -70,30 +109,10 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         UpdateRuleSetButtons();
         rulesForm = new RulesForm(data, customRuleSet, 300);
         UpdateRules();
-        var speedupSlider = new Slider()
-        {
-            TrackWidth = 300,
-            Min = 1f,
-            Max = 20f,
-            Interval = 1f,
-            Value = config.FishingTimeScale,
-            ValueColor = Colors.MutedText,
-            ValueFormat = v => I18n.Settings_Time_FishingSpeedup_ValueFormat(v),
-        };
-        var spawnIntervalSlider = new Slider()
-        {
-            TrackWidth = 300,
-            Min = 10f,
-            Max = 300f,
-            Interval = 10f,
-            Value = config.RespawnInterval,
-            ValueColor = Colors.MutedText,
-            ValueFormat = v => I18n.Settings_Time_RerollInterval_ValueFormat((int)v),
-        };
         var hudLocationChooser = new ScreenLocationChooser()
         {
-            Corner = config.SeededRandomFishHudLocation,
-            Offset = config.SeededRandomFishHudOffset.ToVector2(),
+            Corner = Config.SeededRandomFishHudLocation,
+            Offset = Config.SeededRandomFishHudOffset.ToVector2(),
         };
         var form = new FormBuilder(300)
             .AddSection(I18n.Settings_Time_Heading())
@@ -108,6 +127,16 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
                 spawnIntervalSlider
             )
             .AddSection(I18n.Settings_UI_Heading())
+            .AddField(
+                I18n.Settings_UI_PreviewKeybind_Title(),
+                I18n.Settings_UI_PreviewKeybind_Description(),
+                Label.Simple("Not implemented yet")
+            )
+            .AddField(
+                I18n.Settings_UI_CatchPreviewRadius_Title(),
+                I18n.Settings_UI_CatchPreviewRadius_Description(),
+                previewRadiusSlider
+            )
             .AddField(
                 I18n.Settings_UI_HudLocation_Title(),
                 I18n.Settings_UI_HudLocation_Description(),
@@ -141,12 +170,55 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
             BorderThickness = UiSprites.MenuBorderThickness,
             Content = new Lane()
             {
-                Name = "DEBUG_LANE",
-                Layout = LayoutParameters.FixedSize(800, 1080),
+                Layout = LayoutParameters.FixedSize(800, 950),
                 Orientation = Orientation.Vertical,
                 Children = [header, separator, mainContentScrollable],
             },
+            FloatingElements =
+            [
+                new(
+                    new Lane()
+                    {
+                        Layout = LayoutParameters.AutoRow(),
+                        Margin = new(Right: 20, Top: -12),
+                        HorizontalContentAlignment = Alignment.End,
+                        VerticalContentAlignment = Alignment.Middle,
+                        Children =
+                        [
+                            CreateActionButton(I18n.Settings_Button_Default(), ResetConfig),
+                            CreateActionButton(I18n.Settings_Button_Cancel(), Close),
+                            CreateActionButton(I18n.Settings_Button_Save(), SaveConfigAndClose),
+                        ],
+                    },
+                    FloatingPosition.BelowParent
+                ),
+            ],
         };
+    }
+
+    private void Close()
+    {
+        Game1.playSound("bigDeSelect");
+        Game1.activeClickableMenu = null;
+    }
+
+    private Button CreateActionButton(string text, Action onClick, Color? tintColor = null)
+    {
+        var button = new Button(UiSprites.ButtonDark, UiSprites.ButtonLight)
+        {
+            Layout = new()
+            {
+                Width = Length.Content(),
+                Height = Length.Content(),
+                MinWidth = 150,
+            },
+            Margin = new(Left: 8),
+            Font = Game1.dialogueFont,
+            Text = text,
+            ShadowVisible = true,
+        };
+        button.Click += (_, _) => onClick();
+        return button;
     }
 
     private IView CreateBulletPoint(string text)
@@ -234,6 +306,13 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         return CreateBulletPoint(text);
     }
 
+    private void ResetConfig()
+    {
+        Game1.playSound("drumkit6");
+        var defaultConfig = configContainer.GetDefault();
+        UpdateFromConfig(defaultConfig);
+    }
+
     private void RuleSetButton_Click(object? sender, ClickEventArgs e)
     {
         if (sender is not RuleSetButton button || button.IsSelected)
@@ -245,6 +324,17 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         selectedRuleSet = button.RuleSet;
         UpdateRuleSetButtons();
         UpdateRules();
+    }
+
+    private void SaveConfigAndClose()
+    {
+        Config.RuleSetName = selectedRuleSetName;
+        Config.Rules = selectedRuleSet.Clone();
+        Config.FishingTimeScale = speedupSlider.Value;
+        Config.RespawnInterval = (int)spawnIntervalSlider.Value;
+        Config.CatchPreviewTileRadius = (int)previewRadiusSlider.Value;
+        configContainer.Save();
+        Close();
     }
 
     private static void StartAnimation(Image giantBaitImage, Image mermaidImage)
@@ -269,6 +359,15 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
             ],
             StartDelay = TimeSpan.FromSeconds(4),
         };
+    }
+
+    private void UpdateFromConfig(ModConfig config)
+    {
+        selectedRuleSetName = config.RuleSetName;
+        selectedRuleSet = config.Rules.Clone();
+        speedupSlider.Value = config.FishingTimeScale;
+        spawnIntervalSlider.Value = config.RespawnInterval;
+        previewRadiusSlider.Value = config.CatchPreviewTileRadius;
     }
 
     private void UpdateReadOnlyRules(RuleSet ruleSet)

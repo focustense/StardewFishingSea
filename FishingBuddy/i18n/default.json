@@ -55,7 +55,6 @@
   "Settings.Rules.RespawnOnCancel.Description": "Catchable fish will be immediately respawned when pulling out with no bite",
   "Settings.Rules.RuleTemplate.Required": "{{PluralFeature}} {{Requirement}}",
   "Settings.Rules.RuleTemplate.Visibility": "{{PluralFeature}} {{Requirement}}",
-
   "Settings.Time.Heading": "Time Scale",
   "Settings.Time.FishingSpeedup.Title": "Waiting Speed",
   "Settings.Time.FishingSpeedup.Description": "Time flies when you're having fun. The bite rate is not changed, but the game will fast-forward until you get a bite. Only active in single-player.",
@@ -63,7 +62,15 @@
   "Settings.Time.RerollInterval.Title": "Respawn Interval",
   "Settings.Time.RerollInterval.Description": "Number of in-game minutes between fish spawn changes. Lower values mean less waiting around for the fish you want, but may make it harder to catch them in time!",
   "Settings.Time.RerollInterval.ValueFormat": "{{value}} minutes",
-  "Settings.UI.Heading": "User Interface",
+  "Settings.UI.Heading": "Interface",
+  "Settings.UI.PreviewKeybind.Title": "Toggle Preview Key",
+  "Settings.UI.PreviewKeybind.Description": "Key or combination to press in order to toggle the previews on/off while fishing rod is active.",
+  "Settings.UI.CatchPreviewRadius.Title": "Catch Preview Radius",
+  "Settings.UI.CatchPreviewRadius.Description": "Number of tiles around the player on which to show next-catch previews. Setting this very high might slow down the game.",
+  "Settings.UI.CatchPreviewRadius.ValueFormat": "{{value}} tiles",
   "Settings.UI.HudLocation.Title": "HUD Location",
-  "Settings.UI.HudLocation.Description": "Where the jelly indicator HUD will be shown on screen. Click and drag on the TV to position precisely."
+  "Settings.UI.HudLocation.Description": "Where the jelly indicator HUD will be shown on screen. Click and drag on the TV to position precisely.",
+  "Settings.Button.Save": "Save",
+  "Settings.Button.Cancel": "Cancel",
+  "Settings.Button.Default": "Reset All"
 }
