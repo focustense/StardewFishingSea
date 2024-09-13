@@ -128,16 +128,24 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
                 form,
             ],
         };
-        var flow = new Lane()
+        var mainContentScrollable = new ScrollableView()
         {
-            Layout = LayoutParameters.AutoRow(),
-            Orientation = Orientation.Vertical,
-            Children = [header, separator, mainContent],
+            Layout = LayoutParameters.Fill(),
+            Peeking = 128,
+            Content = mainContent,
         };
-        return new ScrollableFrameView()
+        return new Frame()
         {
-            FrameLayout = LayoutParameters.FixedSize(800, 1080),
-            Content = flow,
+            Background = UiSprites.MenuBackground,
+            Border = UiSprites.MenuBorder,
+            BorderThickness = UiSprites.MenuBorderThickness,
+            Content = new Lane()
+            {
+                Name = "DEBUG_LANE",
+                Layout = LayoutParameters.FixedSize(800, 1080),
+                Orientation = Orientation.Vertical,
+                Children = [header, separator, mainContentScrollable],
+            },
         };
     }
 
@@ -184,32 +192,15 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         {
             Layout = LayoutParameters.FixedSize(128, 128),
             Margin = new(Left: 32),
-        };
-        _ = new SpriteAnimator(giantBaitImage)
-        {
-            FrameDuration = TimeSpan.FromMilliseconds(500),
-            Frames = Sprites.GiantBait,
+            Sprite = Sprites.GiantBait[0],
         };
         var mermaidImage = new Image()
         {
             Layout = LayoutParameters.FixedSize(128, 128),
             Margin = new(Right: 24),
+            Sprite = Sprites.Mermaid[0],
         };
-        _ = new SpriteAnimator(mermaidImage)
-        {
-            FrameDuration = TimeSpan.FromMilliseconds(150),
-            Frames =
-            [
-                Sprites.Mermaid[0],
-                Sprites.Mermaid[1],
-                Sprites.Mermaid[2],
-                Sprites.Mermaid[1],
-                Sprites.Mermaid[2],
-                Sprites.Mermaid[3],
-                Sprites.Mermaid[4],
-            ],
-            StartDelay = TimeSpan.FromSeconds(4),
-        };
+        StartAnimation(giantBaitImage, mermaidImage);
         return new Panel()
         {
             Layout = new() { Width = Length.Stretch(), Height = Length.Px(150) },
@@ -254,6 +245,30 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         selectedRuleSet = button.RuleSet;
         UpdateRuleSetButtons();
         UpdateRules();
+    }
+
+    private static void StartAnimation(Image giantBaitImage, Image mermaidImage)
+    {
+        _ = new SpriteAnimator(giantBaitImage)
+        {
+            FrameDuration = TimeSpan.FromMilliseconds(500),
+            Frames = Sprites.GiantBait,
+        };
+        _ = new SpriteAnimator(mermaidImage)
+        {
+            FrameDuration = TimeSpan.FromMilliseconds(150),
+            Frames =
+            [
+                Sprites.Mermaid[0],
+                Sprites.Mermaid[1],
+                Sprites.Mermaid[2],
+                Sprites.Mermaid[1],
+                Sprites.Mermaid[2],
+                Sprites.Mermaid[3],
+                Sprites.Mermaid[4],
+            ],
+            StartDelay = TimeSpan.FromSeconds(4),
+        };
     }
 
     private void UpdateReadOnlyRules(RuleSet ruleSet)
