@@ -213,7 +213,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         Game1.activeClickableMenu = null;
     }
 
-    private Button CreateActionButton(string text, Action onLeftClick, Color? tintColor = null)
+    private Button CreateActionButton(string text, Action onLeftClick)
     {
         var button = new Button(UiSprites.ButtonDark, UiSprites.ButtonLight)
         {
