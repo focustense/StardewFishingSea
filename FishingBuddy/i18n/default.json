@@ -31,6 +31,10 @@
   "BuiltinRuleSets.Hard.Title": "Legend",
   "BuiltinRuleSets.Hard.Description": "Most features require high-level perks or fishing mastery - and even then, you'll need to gear up and react quickly.",
 
+  // In-game UI.
+  "HudMessage.Disabled": "Fishing overlays disabled",
+  "HudMessage.Enabled": "Fishing overlays enabled",
+
   // Strings used in settings menu.
   "Settings.ModTitle": "A Fishing Sea",
   "Settings.ModDescription": "\"Catching you will make me the most famous fisherman there is, right up there with the bald guy on the cable fishing show.\"",
@@ -63,8 +67,10 @@
   "Settings.Time.RerollInterval.Description": "Number of in-game minutes between fish spawn changes. Lower values mean less waiting around for the fish you want, but may make it harder to catch them in time!",
   "Settings.Time.RerollInterval.ValueFormat": "{{value}} minutes",
   "Settings.UI.Heading": "Interface",
-  "Settings.UI.PreviewKeybind.Title": "Toggle Preview Keys",
-  "Settings.UI.PreviewKeybind.Description": "Key or combination to press in order to toggle the previews on/off while fishing rod is active.",
+  "Settings.UI.PreviewEnableOnLoad.Title": "Enable on Load",
+  "Settings.UI.PreviewEnableOnLoad.Description": "Whether overlays are on by default when a save is loaded, or a new game is started. Overlays can still be toggled on/off with the {{PreviewKeybindTitle}} and are still only visible when a fishing rod is equipped.",
+  "Settings.UI.PreviewKeybind.Title": "Overlay Hotkeys",
+  "Settings.UI.PreviewKeybind.Description": "Key or combination to press in order to toggle the previews and predictions on/off while fishing rod is active.",
   "Settings.UI.PreviewKeybind.Empty": "(click to set)",
   "Settings.UI.PreviewKeybind.Editor.Add.Text": "Add key binding",
   "Settings.UI.PreviewKeybind.Editor.Delete.Description": "Remove this key binding",

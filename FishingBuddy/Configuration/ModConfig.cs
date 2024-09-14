@@ -24,6 +24,16 @@ public class ModConfig
         new(new Keybind(SButton.LeftShift, SButton.F));
 
     /// <summary>
+    /// Whether or not previews are enabled by default when loading a save or starting a new game.
+    /// </summary>
+    /// <remarks>
+    /// If <c>false</c>, previews must be explicitly turned on with the
+    /// <see cref="CatchPreviewToggleKeybind"/>. If <c>true</c>, the keybind must be used to turn
+    /// them <em>off</em>.
+    /// </remarks>
+    public bool EnablePreviewsOnLoad { get; set; } = false;
+
+    /// <summary>
     /// Rate at which the game time will run while fishing (waiting for a bite).
     /// </summary>
     /// <remarks>

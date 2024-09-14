@@ -24,6 +24,11 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
             SpriteItemId = "(O)128",
         };
 
+    private readonly CheckBox enableOnLoadCheckbox = new CheckBox()
+    {
+        IsChecked = configContainer.Config.EnablePreviewsOnLoad,
+    };
+
     private readonly KeybindListEditor keybindListEditor =
         new(data.GetButtonSpriteMap())
         {
@@ -147,6 +152,13 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
                 spawnIntervalSlider
             )
             .AddSection(I18n.Settings_UI_Heading())
+            .AddField(
+                I18n.Settings_UI_PreviewEnableOnLoad_Title(),
+                I18n.Settings_UI_PreviewEnableOnLoad_Description(
+                    I18n.Settings_UI_PreviewKeybind_Title()
+                ),
+                enableOnLoadCheckbox
+            )
             .AddField(
                 I18n.Settings_UI_PreviewKeybind_Title(),
                 I18n.Settings_UI_PreviewKeybind_Description(),
@@ -352,6 +364,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         Config.Rules = selectedRuleSet.Clone();
         Config.FishingTimeScale = speedupSlider.Value;
         Config.RespawnInterval = (int)spawnIntervalSlider.Value;
+        Config.EnablePreviewsOnLoad = enableOnLoadCheckbox.IsChecked;
         Config.CatchPreviewToggleKeybind = keybindListEditor.KeybindList;
         Config.CatchPreviewTileRadius = (int)previewRadiusSlider.Value;
         configContainer.Save();
@@ -388,6 +401,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         selectedRuleSet = config.Rules.Clone();
         speedupSlider.Value = config.FishingTimeScale;
         spawnIntervalSlider.Value = config.RespawnInterval;
+        enableOnLoadCheckbox.IsChecked = config.EnablePreviewsOnLoad;
         keybindListEditor.KeybindList = config.CatchPreviewToggleKeybind;
         previewRadiusSlider.Value = config.CatchPreviewTileRadius;
     }

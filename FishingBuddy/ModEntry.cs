@@ -70,6 +70,7 @@ internal sealed class ModEntry : Mod
         helper.Events.Display.RenderedStep += Display_RenderedStep;
         helper.Events.GameLoop.DayStarted += GameLoop_DayStarted;
         helper.Events.GameLoop.ReturnedToTitle += GameLoop_ReturnedToTitle;
+        helper.Events.GameLoop.SaveLoaded += GameLoop_SaveLoaded;
         helper.Events.GameLoop.TimeChanged += GameLoop_TimeChanged;
         helper.Events.GameLoop.UpdateTicked += GameLoop_UpdateTicked;
         helper.Events.Input.ButtonsChanged += Input_ButtonsChanged;
@@ -146,6 +147,14 @@ internal sealed class ModEntry : Mod
         FishRandom.ResetAllScreens();
     }
 
+    private void GameLoop_SaveLoaded(object? sender, SaveLoadedEventArgs e)
+    {
+        if (Config.EnablePreviewsOnLoad)
+        {
+            CatchPreview.Enabled = true;
+        }
+    }
+
     private void GameLoop_TimeChanged(object? sender, TimeChangedEventArgs e)
     {
         UpdateNextSplash();
@@ -178,9 +187,11 @@ internal sealed class ModEntry : Mod
         if (Config.CatchPreviewToggleKeybind.JustPressed())
         {
             CatchPreview.Enabled = !CatchPreview.Enabled;
-            Monitor.Log(
-                "Fish catch previews " + (CatchPreview.Enabled ? "enabled" : "disabled"),
-                LogLevel.Debug
+            Game1.addHUDMessage(
+                new(CatchPreview.Enabled ? I18n.HudMessage_Enabled() : I18n.HudMessage_Disabled())
+                {
+                    noIcon = true,
+                }
             );
             Helper.Input.SuppressActiveKeybinds(Config.CatchPreviewToggleKeybind);
         }
