@@ -25,11 +25,15 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         };
 
     private readonly KeybindListEditor keybindListEditor =
-        new(data.GetButtonSpriteMap(), I18n.Settings_UI_PreviewKeybind_Empty())
+        new(data.GetButtonSpriteMap())
         {
             ButtonHeight = 48,
             Font = Game1.smallFont,
             EditableType = KeybindType.MultipleKeybinds,
+            AddButtonText = I18n.Settings_UI_PreviewKeybind_Editor_Add_Text(),
+            DeleteButtonTooltip = I18n.Settings_UI_PreviewKeybind_Editor_Delete_Description(),
+            EmptyText = I18n.Settings_UI_PreviewKeybind_Empty(),
+            EmptyTextColor = Colors.MutedText,
             KeybindList = configContainer.Config.CatchPreviewToggleKeybind,
             IsFocusable = true,
         };
