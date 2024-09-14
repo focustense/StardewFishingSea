@@ -171,6 +171,10 @@ internal sealed class ModEntry : Mod
 
     private void Input_ButtonsChanged(object? sender, ButtonsChangedEventArgs e)
     {
+        if (!Context.IsPlayerFree)
+        {
+            return;
+        }
         if (Config.CatchPreviewToggleKeybind.JustPressed())
         {
             CatchPreview.Enabled = !CatchPreview.Enabled;
