@@ -83,4 +83,19 @@ public class RuleSet
             RespawnOnCancel = RespawnOnCancel,
         };
     }
+
+    /// <summary>
+    /// Copies the rules - <b>excluding</b> metadata such as <see cref="Title"/> and
+    /// <see cref="Description"/> - from another instance.
+    /// </summary>
+    /// <param name="other">The instance to copy from.</param>
+    public void CopyFrom(RuleSet other)
+    {
+        CurrentBubbles = other.CurrentBubbles;
+        FutureBubbles = other.FutureBubbles;
+        FishPredictions = other.FishPredictions;
+        JellyPredictions = other.JellyPredictions;
+        FreezeOnCast = other.FreezeOnCast;
+        RespawnOnCancel = other.RespawnOnCancel;
+    }
 }

@@ -122,6 +122,11 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
             })
             .ToList();
         UpdateRuleSetButtons();
+        if (string.IsNullOrEmpty(selectedRuleSetName))
+        {
+            customRuleSet.CopyFrom(selectedRuleSet);
+            selectedRuleSet = customRuleSet;
+        }
         rulesForm = new RulesForm(data, customRuleSet, 300);
         UpdateRules();
         var hudLocationChooser = new ScreenLocationChooser()
