@@ -1,6 +1,7 @@
 ﻿using FishingBuddy.Configuration;
 using FishingBuddy.Data;
 using StardewUI;
+using StardewUI.Widgets.Keybinding;
 
 namespace FishingBuddy.UI;
 
@@ -21,6 +22,16 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
             Title = I18n.Settings_Difficulty_Custom_Title(),
             Description = I18n.Settings_Difficulty_Custom_Description(),
             SpriteItemId = "(O)128",
+        };
+
+    private readonly KeybindListEditor keybindListEditor =
+        new(data.GetButtonSpriteMap(), I18n.Settings_UI_PreviewKeybind_Empty())
+        {
+            ButtonHeight = 48,
+            Font = Game1.smallFont,
+            EditableType = KeybindType.MultipleKeybinds,
+            KeybindList = configContainer.Config.CatchPreviewToggleKeybind,
+            IsFocusable = true,
         };
 
     private readonly Slider previewRadiusSlider =
@@ -102,7 +113,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
             .Append(new("", customRuleSet))
             .Select(ruleSetButton =>
             {
-                ruleSetButton.Click += RuleSetButton_Click;
+                ruleSetButton.LeftClick += RuleSetButton_LeftClick;
                 return ruleSetButton as IView;
             })
             .ToList();
@@ -130,7 +141,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
             .AddField(
                 I18n.Settings_UI_PreviewKeybind_Title(),
                 I18n.Settings_UI_PreviewKeybind_Description(),
-                Label.Simple("Not implemented yet")
+                keybindListEditor
             )
             .AddField(
                 I18n.Settings_UI_CatchPreviewRadius_Title(),
@@ -202,7 +213,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         Game1.activeClickableMenu = null;
     }
 
-    private Button CreateActionButton(string text, Action onClick, Color? tintColor = null)
+    private Button CreateActionButton(string text, Action onLeftClick, Color? tintColor = null)
     {
         var button = new Button(UiSprites.ButtonDark, UiSprites.ButtonLight)
         {
@@ -217,7 +228,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
             Text = text,
             ShadowVisible = true,
         };
-        button.Click += (_, _) => onClick();
+        button.LeftClick += (_, _) => onLeftClick();
         return button;
     }
 
@@ -313,7 +324,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         UpdateFromConfig(defaultConfig);
     }
 
-    private void RuleSetButton_Click(object? sender, ClickEventArgs e)
+    private void RuleSetButton_LeftClick(object? sender, ClickEventArgs e)
     {
         if (sender is not RuleSetButton button || button.IsSelected)
         {
@@ -332,6 +343,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         Config.Rules = selectedRuleSet.Clone();
         Config.FishingTimeScale = speedupSlider.Value;
         Config.RespawnInterval = (int)spawnIntervalSlider.Value;
+        Config.CatchPreviewToggleKeybind = keybindListEditor.KeybindList;
         Config.CatchPreviewTileRadius = (int)previewRadiusSlider.Value;
         configContainer.Save();
         Close();
@@ -367,6 +379,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         selectedRuleSet = config.Rules.Clone();
         speedupSlider.Value = config.FishingTimeScale;
         spawnIntervalSlider.Value = config.RespawnInterval;
+        keybindListEditor.KeybindList = config.CatchPreviewToggleKeybind;
         previewRadiusSlider.Value = config.CatchPreviewTileRadius;
     }
 

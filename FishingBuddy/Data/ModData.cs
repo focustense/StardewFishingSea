@@ -1,4 +1,8 @@
-﻿namespace FishingBuddy.Data;
+﻿using Microsoft.Xna.Framework.Graphics;
+using StardewUI;
+using StardewUI.Widgets.Keybinding;
+
+namespace FishingBuddy.Data;
 
 /// <summary>
 /// Holds all built-in/moddable data for the mod.
@@ -9,6 +13,16 @@ internal class ModData(IModHelper helper)
     /// Dictionary of condition names to feature conditions.
     /// </summary>
     public Dictionary<string, FeatureCondition> FeatureConditions => featureConditions.Asset;
+
+    /// <summary>
+    /// Sprite sheet containing the sprites for gamepad buttons.
+    /// </summary>
+    public Texture2D KeybindButtons => keybindButtonsTexture.Asset;
+
+    /// <summary>
+    /// Sprite sheet containing the sprites used for keyboard keys.
+    /// </summary>
+    public Texture2D KeybindKeys => keybindKeysTexture.Asset;
 
     /// <summary>
     /// Dictionary of built-in rule set names to their rules.
@@ -22,8 +36,23 @@ internal class ModData(IModHelper helper)
             "assets/conditions.json",
             OnLoadFeatureConditions
         );
+
+    private readonly LazyAsset<Texture2D> keybindButtonsTexture =
+        new(helper, $"Mods/{helper.ModContent.ModID}/KeybindButtons", "assets/XboxButtons.png");
+
+    private readonly LazyAsset<Texture2D> keybindKeysTexture =
+        new(helper, $"Mods/{helper.ModContent.ModID}/KeybindKeys", "assets/KeyboardKeys.png");
+
     private readonly LazyAsset<Dictionary<string, RuleSet>> ruleSets =
         new(helper, $"Mods/{helper.ModContent.ModID}/Rules", "assets/rules.json", OnLoadRuleSets);
+
+    /// <summary>
+    /// Gets the sprite map for gamepad buttons/keyboard keys used in keybinds/button prompts.
+    /// </summary>
+    public ISpriteMap<SButton> GetButtonSpriteMap()
+    {
+        return new XeluButtonSpriteMap(KeybindButtons, KeybindKeys);
+    }
 
     private static void OnLoadFeatureConditions(
         Dictionary<string, FeatureCondition> featureConditions

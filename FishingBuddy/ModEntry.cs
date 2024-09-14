@@ -61,11 +61,10 @@ internal sealed class ModEntry : Mod
     public override void Entry(IModHelper helper)
     {
         I18n.Init(helper.Translation);
+        StardewUI.UI.Initialize(helper, Monitor);
         data = new(helper);
         configContainer = new(helper);
         timeAccelerator = new(() => Config);
-
-        Logger.Monitor = Monitor;
 
         helper.Events.Display.RenderedHud += Display_RenderedHud;
         helper.Events.Display.RenderedStep += Display_RenderedStep;
