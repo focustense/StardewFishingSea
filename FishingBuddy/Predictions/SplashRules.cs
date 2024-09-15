@@ -27,6 +27,15 @@ public static class SplashRules
     }
 
     /// <summary>
+    /// Latest (maximum) time of day for a frenzy, after which frenzies are blocked.
+    /// </summary>
+    public static int MaximumFrenzyStartTimeOfDay
+    {
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        get => 2300;
+    }
+
+    /// <summary>
     /// Maximum distance in tiles that a splash spot can appear from land.
     /// </summary>
     /// <remarks>
@@ -41,19 +50,10 @@ public static class SplashRules
     /// than 4 tiles won't spawn bubbles.
     /// </para>
     /// </remarks>
-    public static int MaximumDistanceToLand
+    public static int MaximumSplashDistanceToLand
     {
         [MethodImpl(MethodImplOptions.NoInlining)]
         get => 4;
-    }
-
-    /// <summary>
-    /// Latest (maximum) time of day for a frenzy, after which frenzies are blocked.
-    /// </summary>
-    public static int MaximumFrenzyStartTimeOfDay
-    {
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        get => 2300;
     }
 
     /// <summary>

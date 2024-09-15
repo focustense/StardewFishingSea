@@ -80,7 +80,7 @@ internal static class SplashPredictor
                     continue;
                 }
                 int distanceToLand = FishingRod.distanceToLand(x, y, location);
-                if (distanceToLand < 1 || distanceToLand > SplashRules.MaximumDistanceToLand)
+                if (distanceToLand <= 1 || distanceToLand > SplashRules.MaximumSplashDistanceToLand)
                 {
                     continue;
                 }
