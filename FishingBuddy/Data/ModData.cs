@@ -34,7 +34,7 @@ internal class ModData(IModHelper helper)
             helper,
             $"Mods/{helper.ModContent.ModID}/Conditions",
             "assets/conditions.json",
-            OnLoadFeatureConditions
+            conditions => OnLoadFeatureConditions(conditions, helper.ModRegistry.ModID)
         );
 
     private readonly LazyAsset<Texture2D> keybindButtonsTexture =
@@ -55,7 +55,8 @@ internal class ModData(IModHelper helper)
     }
 
     private static void OnLoadFeatureConditions(
-        Dictionary<string, FeatureCondition> featureConditions
+        Dictionary<string, FeatureCondition> featureConditions,
+        string modId
     )
     {
         foreach (var (name, condition) in featureConditions)
@@ -69,6 +70,7 @@ internal class ModData(IModHelper helper)
                     $"BuiltinConditions.{name}.VisibilityRuleText"
                 )
                 .Default($"are visible with {name}");
+            condition.Query = condition.Query.Replace("{{ModId}}", modId);
         }
     }
 
