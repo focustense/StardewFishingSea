@@ -49,7 +49,7 @@ public class ModConfig
     /// Currently is expected to be a multiple of 10 (the rate at which the vanilla game clock
     /// actually updates) and will be rounded to the nearest multiple otherwise.
     /// </remarks>
-    public int RespawnInterval { get; set; } = 10;
+    public int RespawnInterval { get; set; } = 30;
 
     /// <summary>
     /// The active rule set, whether standard or custom.

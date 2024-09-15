@@ -108,10 +108,9 @@ internal sealed class ModEntry : Mod
     private void FishingState_Cancelled(object? sender, EventArgs e)
     {
         CatchPreview.Frozen = false;
-        if (CurrentRules.RespawnOnCancel)
-        {
-            CatchPreview.Update(forceImmediateUpdate: true);
-        }
+        // Always update in case respawns were frozen during the last cast and we are now overdue.
+        // We just won't force the immediate update unless the rules say so.
+        CatchPreview.Update(forceImmediateUpdate: CurrentRules.RespawnOnCancel);
     }
 
     private void FishingState_Cast(object? sender, EventArgs e)

@@ -88,6 +88,13 @@ internal class CatchPreview(Func<ModConfig> configSelector)
     private PreviewInputs? lastInputs;
     private bool isEnabled;
 
+    // We use current/last PreviewInputs to detect changes to location, equipment, player location,
+    // etc. - all things that can invalidate previews from one frame to the next. However, for the
+    // time of day, we don't want to compare to the last frame's inputs, we need to know how much
+    // time has elapsed since the last actual snapshot was taken; otherwise we can only ever detect
+    // a 10-minute interval.
+    private int lastSnapshotTimeOfDay;
+
     /// <summary>
     /// Updates predictions for the current time/location.
     /// </summary>
@@ -105,16 +112,28 @@ internal class CatchPreview(Func<ModConfig> configSelector)
         {
             UpdateSeededRandomFish(inputs);
         }
-        var minutesElapsed = inputs.MinutesElapsedSince(lastInputs);
+        int minutesElapsed = Utility.CalculateMinutesBetweenTimes(
+            lastSnapshotTimeOfDay,
+            Game1.timeOfDay
+        );
+        // If minutesElapsed < 0 then it means the day rolled over.
+        bool dueForSnapshot =
+            !Frozen && (minutesElapsed < 0 || minutesElapsed >= config.RespawnInterval);
         if (
             forceImmediateUpdate
+            // Whenever the time changes at all, even if the respawn interval hasn't been reached,
+            // we should still update the previews (possibly without a new RNG snapshot) because the
+            // non-RNG rules around e.g. times of day may force a change to the outcome.
+            || minutesElapsed != 0
             || !inputs.SameForRegularCatches(lastInputs)
-            || minutesElapsed >= config.RespawnInterval
         )
         {
-            bool snapshot =
-                forceImmediateUpdate || !Frozen && minutesElapsed >= config.RespawnInterval;
+            bool snapshot = forceImmediateUpdate || dueForSnapshot;
             UpdateRegularFish(inputs, config.CatchPreviewTileRadius, snapshot);
+            if (snapshot)
+            {
+                lastSnapshotTimeOfDay = Game1.timeOfDay;
+            }
         }
         lastInputs = inputs;
     }
@@ -244,7 +263,6 @@ internal class CatchPreview(Func<ModConfig> configSelector)
 
     private record PreviewInputs(
         string LocationName,
-        int TimeOfDay,
         int LuckLevel,
         double DailyLuck,
         string? RodId,
@@ -270,7 +288,6 @@ internal class CatchPreview(Func<ModConfig> configSelector)
                 : (null, null, null, []);
             return new(
                 locationName,
-                Game1.timeOfDay,
                 player.LuckLevel,
                 player.DailyLuck,
                 rodId,
@@ -280,11 +297,6 @@ internal class CatchPreview(Func<ModConfig> configSelector)
                 catchCount,
                 player.TilePoint
             );
-        }
-
-        public int MinutesElapsedSince(PreviewInputs? other)
-        {
-            return Utility.CalculateMinutesBetweenTimes(other?.TimeOfDay ?? 0, TimeOfDay);
         }
 
         public bool SameForRegularCatches(PreviewInputs? other)
