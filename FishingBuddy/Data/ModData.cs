@@ -25,6 +25,16 @@ internal class ModData(IModHelper helper)
     public Texture2D KeybindKeys => keybindKeysTexture.Asset;
 
     /// <summary>
+    /// Sprite sheet containing the sprites used for mouse buttons.
+    /// </summary>
+    public Texture2D MouseButtons => mouseButtonsTexture.Asset;
+
+    /// <summary>
+    /// Sprite sheet containing arrows used in button prompts.
+    /// </summary>
+    public Texture2D PromptArrows => promptArrowsTexture.Asset;
+
+    /// <summary>
     /// Dictionary of built-in rule set names to their rules.
     /// </summary>
     public Dictionary<string, RuleSet> RuleSets => ruleSets.Asset;
@@ -43,6 +53,12 @@ internal class ModData(IModHelper helper)
     private readonly LazyAsset<Texture2D> keybindKeysTexture =
         new(helper, $"Mods/{helper.ModContent.ModID}/KeybindKeys", "assets/KeyboardKeys.png");
 
+    private readonly LazyAsset<Texture2D> mouseButtonsTexture =
+        new(helper, $"Mods/{helper.ModContent.ModID}/MouseButtons", "assets/MouseButtons.png");
+
+    private readonly LazyAsset<Texture2D> promptArrowsTexture =
+        new(helper, $"Mods/{helper.ModContent.ModID}/PromptArrows", "assets/PromptArrows.png");
+
     private readonly LazyAsset<Dictionary<string, RuleSet>> ruleSets =
         new(helper, $"Mods/{helper.ModContent.ModID}/Rules", "assets/rules.json", OnLoadRuleSets);
 
@@ -51,7 +67,19 @@ internal class ModData(IModHelper helper)
     /// </summary>
     public ISpriteMap<SButton> GetButtonSpriteMap()
     {
-        return new XeluButtonSpriteMap(KeybindButtons, KeybindKeys);
+        return new XeluButtonSpriteMap(KeybindButtons, KeybindKeys, MouseButtons);
+    }
+
+    /// <summary>
+    /// Gets the sprite map for arrows used in positioning and other UI prompts.
+    /// </summary>
+    /// <returns></returns>
+    public ISpriteMap<Direction> GetDirectionSpriteMap()
+    {
+        return new SpriteMapBuilder<Direction>(PromptArrows)
+            .Size(64, 64)
+            .Add(Direction.North, Direction.South, Direction.West, Direction.East)
+            .Build();
     }
 
     private static void OnLoadFeatureConditions(
