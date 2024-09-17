@@ -161,7 +161,6 @@ internal sealed class ModEntry : Mod
 
     private void GameLoop_UpdateTicked(object? sender, UpdateTickedEventArgs e)
     {
-        AnimationRunner.Tick(Game1.currentGameTime.ElapsedGameTime);
         var rod = Game1.player.CurrentTool as FishingRod;
         timeAccelerator.Active =
             IsEffectivelySinglePlayer()

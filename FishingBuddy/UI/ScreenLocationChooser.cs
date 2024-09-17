@@ -1,5 +1,6 @@
 ﻿using FishingBuddy.Configuration;
 using StardewUI;
+using StardewUI.Widgets;
 using StardewValley.TerrainFeatures;
 
 namespace FishingBuddy.UI;
@@ -7,7 +8,10 @@ namespace FishingBuddy.UI;
 /// <summary>
 /// Widget for choosing a screen corner and offset.
 /// </summary>
-public class ScreenLocationChooser : WrapperView
+public class ScreenLocationChooser(
+    ISpriteMap<SButton> buttonSpriteMap,
+    ISpriteMap<Direction> directionSpriteMap
+) : WrapperView
 {
     public RectangleCorner Corner
     {
@@ -56,11 +60,26 @@ public class ScreenLocationChooser : WrapperView
         bottomLeftFrame = CreatePlacementFrame(RectangleCorner.BottomLeft);
         bottomRightFrame = CreatePlacementFrame(RectangleCorner.BottomRight);
         UpdatePlacementFrames();
-        return new Panel()
+        var panel = new Panel()
         {
             Layout = LayoutParameters.FitContent(),
             Children = [background, topLeftFrame, topRightFrame, bottomLeftFrame, bottomRightFrame],
+            IsFocusable = true,
         };
+        panel.LeftClick += Panel_LeftClick;
+        return panel;
+    }
+
+    private void Panel_LeftClick(object? sender, ClickEventArgs e)
+    {
+        Overlay.Push(
+            new PositioningOverlay(buttonSpriteMap, directionSpriteMap)
+            {
+                Content = new SeedFishInfoView() { FishId = "(O)CaveJelly", CatchesRemaining = 13 },
+                DimmingAmount = 0.93f,
+                ContentPlacement = new(Alignment.Middle, Alignment.Start),
+            }
+        );
     }
 
     private static Frame CreatePlacementFrame(RectangleCorner corner)

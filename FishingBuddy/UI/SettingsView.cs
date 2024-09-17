@@ -134,7 +134,9 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         }
         rulesForm = new RulesForm(data, customRuleSet, 300);
         UpdateRules();
-        var hudLocationChooser = new ScreenLocationChooser()
+        var buttonSpriteMap = data.GetButtonSpriteMap(overlay: true);
+        var directionSpriteMap = data.GetDirectionSpriteMap();
+        var hudLocationChooser = new ScreenLocationChooser(buttonSpriteMap, directionSpriteMap)
         {
             Corner = Config.SeededRandomFishHudLocation,
             Offset = Config.SeededRandomFishHudOffset.ToVector2(),

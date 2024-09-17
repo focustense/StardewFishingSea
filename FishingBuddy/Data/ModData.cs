@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using StardewUI;
-using StardewUI.Widgets.Keybinding;
 
 namespace FishingBuddy.Data;
 
@@ -65,9 +64,21 @@ internal class ModData(IModHelper helper)
     /// <summary>
     /// Gets the sprite map for gamepad buttons/keyboard keys used in keybinds/button prompts.
     /// </summary>
-    public ISpriteMap<SButton> GetButtonSpriteMap()
+    /// <param name="overlay">Whether to configure the map for overlays, vs. the default used
+    /// in menus. Overlay themes use dark keyboard and light mouse sprites, and use a larger
+    /// slice scale for keyboard keys in order to remain uniform.</param>
+    public ISpriteMap<SButton> GetButtonSpriteMap(bool overlay = false)
     {
-        return new XeluButtonSpriteMap(KeybindButtons, KeybindKeys, MouseButtons);
+        return new XeluButtonSpriteMap(KeybindButtons, KeybindKeys, MouseButtons)
+        {
+            KeyboardTheme = overlay
+                ? XeluButtonSpriteMap.SpriteTheme.Dark
+                : XeluButtonSpriteMap.SpriteTheme.Stardew,
+            MouseTheme = overlay
+                ? XeluButtonSpriteMap.SpriteTheme.Light
+                : XeluButtonSpriteMap.SpriteTheme.Stardew,
+            SliceScale = overlay ? 1.0f : 0.3f,
+        };
     }
 
     /// <summary>
