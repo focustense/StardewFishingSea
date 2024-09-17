@@ -272,11 +272,7 @@ internal sealed class ModEntry : Mod
             return;
         }
         SeedFishPreview.Measure(new(500, 500));
-        var position = GetViewportPosition(
-            Config.SeededRandomFishHudLocation,
-            Config.SeededRandomFishHudOffset,
-            SeedFishPreview.OuterSize.ToPoint()
-        );
+        var position = GetViewportPosition(Config.SeededRandomFishHudPlacement);
         var overlayBatch = new PropagatedSpriteBatch(
             spriteBatch,
             Transform.FromTranslation(position)
@@ -316,23 +312,13 @@ internal sealed class ModEntry : Mod
         SplashOverlay.Draw(overlayBatch);
     }
 
-    private static Vector2 GetViewportPosition(RectangleCorner corner, Point offset, Point size)
+    private static Vector2 GetViewportPosition(NineGridPlacement placement)
     {
         var deviceViewport = Game1.graphics.GraphicsDevice.Viewport;
         var uiViewport = Game1.uiViewport;
         var viewportWidth = Math.Min(deviceViewport.Width, uiViewport.Width);
         var viewportHeight = Math.Min(deviceViewport.Height, uiViewport.Height);
-        return corner switch
-        {
-            RectangleCorner.TopLeft => new(offset.X, offset.Y),
-            RectangleCorner.TopRight => new(viewportWidth - offset.X - size.X, offset.Y),
-            RectangleCorner.BottomLeft => new(offset.X, viewportHeight - offset.Y - size.Y),
-            RectangleCorner.BottomRight => new(
-                viewportWidth - offset.X - size.X + 40,
-                viewportHeight - offset.Y - size.Y - 20
-            ),
-            _ => throw new ArgumentException($"Invalid corner value: {corner}", nameof(corner)),
-        };
+        return placement.GetPosition(new(viewportWidth, viewportHeight));
     }
 
     private static bool IsEffectivelySinglePlayer()

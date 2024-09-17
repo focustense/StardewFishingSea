@@ -1,6 +1,7 @@
 ﻿using FishingBuddy.Configuration;
 using FishingBuddy.Data;
 using StardewUI;
+using StardewUI.Widgets;
 using StardewUI.Widgets.Keybinding;
 
 namespace FishingBuddy.UI;
@@ -28,6 +29,16 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
     {
         IsChecked = configContainer.Config.EnablePreviewsOnLoad,
     };
+
+    private readonly NineGridPlacementEditor hudPlacementEditor =
+        new(data.GetButtonSpriteMap(overlay: true), data.GetDirectionSpriteMap())
+        {
+            Layout = LayoutParameters.FixedSize(80, 80),
+            HoverTintColor = Color.Orange,
+            Content = new SeedFishInfoView() { FishId = "(O)CaveJelly", CatchesRemaining = 13 },
+            Placement = configContainer.Config.SeededRandomFishHudPlacement,
+            IsFocusable = true,
+        };
 
     private readonly KeybindListEditor keybindListEditor =
         new(data.GetButtonSpriteMap())
@@ -134,13 +145,6 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         }
         rulesForm = new RulesForm(data, customRuleSet, 300);
         UpdateRules();
-        var buttonSpriteMap = data.GetButtonSpriteMap(overlay: true);
-        var directionSpriteMap = data.GetDirectionSpriteMap();
-        var hudLocationChooser = new ScreenLocationChooser(buttonSpriteMap, directionSpriteMap)
-        {
-            Corner = Config.SeededRandomFishHudLocation,
-            Offset = Config.SeededRandomFishHudOffset.ToVector2(),
-        };
         var form = new FormBuilder(300)
             .AddSection(I18n.Settings_Time_Heading())
             .AddField(
@@ -174,7 +178,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
             .AddField(
                 I18n.Settings_UI_HudLocation_Title(),
                 I18n.Settings_UI_HudLocation_Description(),
-                hudLocationChooser
+                hudPlacementEditor
             )
             .Build();
         var mainContent = new Lane()
@@ -369,6 +373,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         Config.EnablePreviewsOnLoad = enableOnLoadCheckbox.IsChecked;
         Config.CatchPreviewToggleKeybind = keybindListEditor.KeybindList;
         Config.CatchPreviewTileRadius = (int)previewRadiusSlider.Value;
+        Config.SeededRandomFishHudPlacement = hudPlacementEditor.Placement;
         configContainer.Save();
         Close();
     }
@@ -406,6 +411,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         enableOnLoadCheckbox.IsChecked = config.EnablePreviewsOnLoad;
         keybindListEditor.KeybindList = config.CatchPreviewToggleKeybind;
         previewRadiusSlider.Value = config.CatchPreviewTileRadius;
+        hudPlacementEditor.Placement = config.SeededRandomFishHudPlacement;
     }
 
     private void UpdateReadOnlyRules(RuleSet ruleSet)

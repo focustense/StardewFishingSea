@@ -1,6 +1,6 @@
 ﻿using FishingBuddy.Data;
-using Microsoft.Xna.Framework;
 using StardewModdingAPI.Utilities;
+using StardewUI;
 
 namespace FishingBuddy.Configuration;
 
@@ -62,17 +62,8 @@ public class ModConfig
     public string RuleSetName { get; set; } = "medium";
 
     /// <summary>
-    /// Specifies which corner of the screen should display seeded-random fish indicator (e.g. for
-    /// jellies).
+    /// Screen placement of the seeded-random fish indicator (e.g. for jellies).
     /// </summary>
-    public RectangleCorner SeededRandomFishHudLocation { get; set; } = RectangleCorner.TopLeft;
-
-    /// <summary>
-    /// The offset in pixels from the <see cref="SeededRandomFishHudLocation"/> to display the
-    /// seeded-random HUD.
-    /// </summary>
-    /// <remarks>
-    /// Both X and Y values should be positive, and are interpreted relative to the location.
-    /// </remarks>
-    public Point SeededRandomFishHudOffset { get; set; } = new(0, 100);
+    public NineGridPlacement SeededRandomFishHudPlacement { get; set; } =
+        new(Alignment.Start, Alignment.Start);
 }
