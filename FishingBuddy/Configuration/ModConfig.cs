@@ -39,7 +39,7 @@ public class ModConfig
     /// <remarks>
     /// Single-player only.
     /// </remarks>
-    public float FishingTimeScale { get; set; } = 4.0f;
+    public int FishingTimeScale { get; set; } = 4;
 
     /// <summary>
     /// Number of in-game minutes between fish respawns, i.e. when both the predicted fish and

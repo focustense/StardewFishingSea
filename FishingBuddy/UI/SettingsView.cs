@@ -99,7 +99,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
         {
             TrackWidth = SLIDER_WIDTH,
             Min = 1f,
-            Max = 20f,
+            Max = 10f,
             Interval = 1f,
             Value = configContainer.Config.FishingTimeScale,
             ValueColor = Colors.MutedText,
@@ -368,7 +368,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
     {
         Config.RuleSetName = selectedRuleSetName;
         Config.Rules = selectedRuleSet.Clone();
-        Config.FishingTimeScale = speedupSlider.Value;
+        Config.FishingTimeScale = (int)speedupSlider.Value;
         Config.RespawnInterval = (int)spawnIntervalSlider.Value;
         Config.EnablePreviewsOnLoad = enableOnLoadCheckbox.IsChecked;
         Config.CatchPreviewToggleKeybind = keybindListEditor.KeybindList;

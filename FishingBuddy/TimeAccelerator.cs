@@ -1,4 +1,5 @@
 ﻿using FishingBuddy.Configuration;
+using FishingBuddy.Patches;
 using StardewValley.Tools;
 
 namespace FishingBuddy;
@@ -21,19 +22,19 @@ internal class TimeAccelerator(Func<ModConfig> config)
             if (isActive)
             {
                 timeScale = config().FishingTimeScale;
-                AdjustNpcSpeeds(timeScale);
+                PatchState.SpeedMultiplier = timeScale;
                 Reset();
             }
             else
             {
-                AdjustNpcSpeeds(1 / timeScale);
+                PatchState.SpeedMultiplier = 1;
             }
         }
     }
 
     private bool isActive;
     private float previousProgress;
-    private float timeScale;
+    private int timeScale;
 
     /// <summary>
     /// Resets tracked progress, so speed-up does not happen until at least the next frame.
@@ -51,7 +52,7 @@ internal class TimeAccelerator(Func<ModConfig> config)
     /// accelerate the bite progress.</param>
     public void Update(FishingRod? rod)
     {
-        if (!Active || timeScale == 1f)
+        if (!Active || timeScale == 1)
         {
             return;
         }
@@ -79,16 +80,5 @@ internal class TimeAccelerator(Func<ModConfig> config)
             rod.fishingBiteAccumulator += extraProgress;
         }
         previousProgress = Game1.gameTimeInterval = (int)MathF.Round(nextProgress);
-    }
-
-    private static void AdjustNpcSpeeds(float multiplier)
-    {
-        foreach (var npcName in Game1.characterData.Keys)
-        {
-            if (Game1.getCharacterFromName(npcName, false) is NPC npc)
-            {
-                npc.Speed = (int)MathF.Round(npc.Speed * multiplier);
-            }
-        }
     }
 }

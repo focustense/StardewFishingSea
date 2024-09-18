@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
-using FishingBuddy.Predictions;
 using HarmonyLib;
 using StardewValley.GameData.Locations;
 
@@ -9,15 +8,6 @@ namespace FishingBuddy.Patches;
 
 internal static class LocationFishPatches
 {
-    private static readonly MethodInfo fishRandomGetMethod = AccessTools.PropertyGetter(
-        typeof(FishRandom),
-        nameof(FishRandom.Instance)
-    );
-    private static readonly FieldInfo gameRandomField = AccessTools.Field(
-        typeof(Game1),
-        nameof(Game1.random)
-    );
-
     [SuppressMessage(
         "Style",
         "IDE0060:Remove unused parameter",
@@ -32,12 +22,12 @@ internal static class LocationFishPatches
         // Original: Game1.random (field)
         // Patched:  FishRandom.Instance (property)
         return new CodeMatcher(instructions, gen)
-            .MatchStartForward(new CodeMatch(OpCodes.Ldsfld, gameRandomField))
+            .MatchStartForward(new CodeMatch(OpCodes.Ldsfld, Members.GameRandomField))
             .Repeat(matcher =>
             {
                 // Don't use SetInstruction here because it will destroy the label.
                 matcher.Opcode = OpCodes.Call;
-                matcher.Operand = fishRandomGetMethod;
+                matcher.Operand = Members.FishRandomGetMethod;
             })
             .InstructionEnumeration();
     }

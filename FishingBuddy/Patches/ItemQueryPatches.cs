@@ -21,13 +21,12 @@ internal static class ItemQueryPatches
     {
         // Original: var result = Game1.random.ChooseFrom(...)
         // Patched:  var result = GetContextOrDefaultRandom(context).ChooseFrom(...)
-        var gameRandomField = AccessTools.Field(typeof(Game1), nameof(Game1.random));
         var getContextOrDefaultRandomMethod = AccessTools.Method(
             typeof(ItemQueryPatches),
             nameof(GetContextOrDefaultRandom)
         );
         return new CodeMatcher(instructions, gen)
-            .MatchStartForward(new CodeMatch(OpCodes.Ldsfld, gameRandomField))
+            .MatchStartForward(new CodeMatch(OpCodes.Ldsfld, Members.GameRandomField))
             .SetAndAdvance(OpCodes.Ldarg_1, null)
             .InsertAndAdvance(new CodeInstruction(OpCodes.Call, getContextOrDefaultRandomMethod))
             .InstructionEnumeration();

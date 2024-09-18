@@ -34,6 +34,7 @@
       <Using Alias="Object" Include="System.Object" />
       <Using Alias="SObject" Include="StardewValley.Object" />
       <Using Alias="Color" Include="Microsoft.Xna.Framework.Color" />
+      <Using Alias="Point" Include="Microsoft.Xna.Framework.Point" />
       <Using Alias="Rectangle" Include="Microsoft.Xna.Framework.Rectangle" />
       <Using Alias="Vector2" Include="Microsoft.Xna.Framework.Vector2" />
   </ItemGroup>

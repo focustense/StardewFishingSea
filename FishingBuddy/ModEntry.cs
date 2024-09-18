@@ -76,6 +76,7 @@ internal sealed class ModEntry : Mod
         helper.Events.Input.ButtonsChanged += Input_ButtonsChanged;
         helper.Events.Player.Warped += Player_Warped;
 
+        PatchState.Monitor = Monitor;
         Patcher.ApplyAll(ModManifest.UniqueID);
 
         GameStateQuery.Register(

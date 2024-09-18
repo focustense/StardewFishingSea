@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using StardewValley.Internal;
 using StardewValley.Locations;
+using StardewValley.Pathfinding;
 
 namespace FishingBuddy.Patches;
 
@@ -11,6 +12,7 @@ internal static class Patcher
         var harmony = new Harmony(modId);
         ApplyItemQueryFixes(harmony);
         ApplyFishRandomizationPatches(harmony);
+        ApplyCharacterPatches(harmony);
     }
 
     private static void ApplyFishRandomizationPatches(Harmony harmony)
@@ -85,6 +87,30 @@ internal static class Patcher
         harmony.Patch(
             itemQueryTryResolveMethod,
             transpiler: new(typeof(ItemQueryPatches), nameof(ItemQueryPatches.TryResolveTranspiler))
+        );
+    }
+
+    private static void ApplyCharacterPatches(Harmony harmony)
+    {
+        harmony.Patch(
+            AccessTools.PropertyGetter(typeof(Character), nameof(Character.speed)),
+            postfix: new(typeof(CharacterPatches), nameof(CharacterPatches.GetSpeed_Postfix))
+        );
+        harmony.Patch(
+            AccessTools.Method(typeof(Character), nameof(Character.MovePosition)),
+            prefix: new(typeof(CharacterPatches), nameof(CharacterPatches.MovePosition_Prefix)),
+            postfix: new(typeof(CharacterPatches), nameof(CharacterPatches.MovePosition_Postfix)),
+            transpiler: new(
+                typeof(CharacterPatches),
+                nameof(CharacterPatches.MovePosition_Transpiler)
+            )
+        );
+        harmony.Patch(
+            AccessTools.Method(typeof(PathFindController), nameof(PathFindController.update)),
+            transpiler: new(
+                typeof(PathfindingPatches),
+                nameof(PathfindingPatches.PathFindController_Update_Transpiler)
+            )
         );
     }
 }
