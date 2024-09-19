@@ -354,7 +354,7 @@ internal sealed class ModEntry : Mod
         }
         if (splashSchedules.TryGetValue(Game1.currentLocation.NameOrUniqueName, out var schedule))
         {
-            Splash = schedule.FirstOrDefault(s => s.StartTimeOfDay >= Game1.timeOfDay);
+            Splash = schedule.FirstOrDefault(s => s.EndTimeOfDay > Game1.timeOfDay);
         }
         UpdateSplashOverlay();
     }
