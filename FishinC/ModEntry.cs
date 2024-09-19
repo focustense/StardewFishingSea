@@ -62,6 +62,7 @@ internal sealed class ModEntry : Mod
     public override void Entry(IModHelper helper)
     {
         I18n.Init(helper.Translation);
+        Quotes.Init(helper.Translation);
         StardewUI.UI.Initialize(helper, Monitor);
         data = new(helper);
         configContainer = new(helper);

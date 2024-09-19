@@ -31,6 +31,22 @@
   "BuiltinRuleSets.Hard.Title": "Legend",
   "BuiltinRuleSets.Hard.Description": "Most features require high-level perks or fishing mastery - and even then, you'll need to gear up and react quickly.",
 
+  // Pop-culture references and other fun flavor text for the menu and anywhere else a tagline might be used.
+  // Doesn't affect functionality, so feel free to add, change or remove.
+  // Translations should feel free to use more culturally- or geographically-relevant quotes in place of direct translations.
+  //
+  // Note: All quotes must have the form of "FlavorQuote.<Id>" in order to be used. The format is always "SpeakerName|Quote".
+  "FlavorQuote.01": "H. Simpson|Catching you will make me the most famous fisherman there is, right up there with that bald guy on the cable fishing show.",
+  "FlavorQuote.02": "Clerk|They say he's 500 pounds of bottom-dwelling fury, don't you know. No one knows how old he is, but if you ask me, and most people do, he's a hundred years if he's a day.",
+  "FlavorQuote.03": "H. Simpson|Waste your strength, you big ugly catfish! I got a skillet and a stick of butter with your name on it!",
+  "FlavorQuote.04": "H. McCallister|Yarr, I hate the sea and everything in it.",
+  "FlavorQuote.05": "H. McCallister|Ah, Squiddy, I got nothing against you. I just heard there was gold in your belly.",
+  "FlavorQuote.06": "B. Rodriguez|If I'm not gonna catch a fish, I might as well not catch a BIG fish.",
+  "FlavorQuote.07": "B. Rodriguez|Couple more of those and you'll have yourself a fish stick!",
+  "FlavorQuote.08": "P. Fry|I can hit a fish between the eyes from 20 yards!",
+  "FlavorQuote.09": "H. Farnsworth|Ah, the exact centre of the Atlantic Ocean. This seems like the logical place for fish to congregate.",
+  "FlavorQuote.10": "J. Zoidberg|These sardines, for example, are bland and tasteless. And these dry, stringly nightcrawlers, though juicy... very, VERY juicy...",
+
   // GMCM. We don't really "use" GMCM except to add a stub, so this is placeholder text.
   "Gmcm.Placeholder": "If you're reading this text, then something went wrong during mod startup and we aren't able to show the settings menu right now. You can access the settings directly while in-game by pressing {{keybind}}.",
 
@@ -40,7 +56,6 @@
 
   // Strings used in settings menu.
   "Settings.ModTitle": "A Fishing Sea",
-  "Settings.ModDescription": "\"Catching you will make me the most famous fisherman there is, right up there with the bald guy on the cable fishing show.\"",
   "Settings.Difficulty.Heading": "Difficulty",
   "Settings.Difficulty.Custom.Title": "Custom",
   "Settings.Difficulty.Custom.Description": "Tweak all individual scaling settings to suit your personal preferences.",

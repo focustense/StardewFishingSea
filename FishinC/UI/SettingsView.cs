@@ -130,7 +130,7 @@ internal class SettingsView(
         var descriptionLabel = new Label()
         {
             Layout = new() { Width = Length.Percent(100), Height = Length.Content() },
-            Text = I18n.Settings_ModDescription(),
+            Text = Quotes.GetRandomQuote(),
             Color = Colors.MutedText,
         };
         ruleSetLane.Children = data
@@ -217,7 +217,7 @@ internal class SettingsView(
                 {
                     Width = Length.Px(800),
                     Height = Length.Stretch(),
-                    MaxHeight = 1200,
+                    MaxHeight = 1210,
                 },
                 Orientation = Orientation.Vertical,
                 Children = [header, separator, mainContentScrollable],
