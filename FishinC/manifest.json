@@ -1,0 +1,16 @@
+﻿{
+  "Name": "A Fishing Sea",
+  "Author": "focustense",
+  "Version": "0.1.0",
+  "Description": "Make fishing more enjoyable and less time-wasting. Adds fish predictions, jelly predictions, bubble info and more.",
+  "UniqueID": "focustense.FishinC",
+  "EntryDll": "FishinC.dll",
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "IsRequired": false
+    }
+  ],
+  "MinimumApiVersion": "4.0.5",
+  "UpdateKeys": [ "Nexus:27665", "GitHub:focustense/StardewFishingSea" ]
+}

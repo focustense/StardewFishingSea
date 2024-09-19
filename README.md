@@ -1,4 +1,4 @@
-# FishingBuddy
+# A Fishing Sea
 
 Short description/tagline.
 
@@ -8,11 +8,11 @@ What problem does this mod solve, and how does it solve it?
 
 ## Installation
 
-FishingBuddy follows the standard installation procedure for most mods:
+A Fishing Sea follows the standard installation procedure for most mods:
 
 1. Install SMAPI and set up your game for mods, per the [Modding: Player's Guide](https://stardewvalleywiki.com/Modding:Player_Guide/Getting_Started) instructions.
-2. Download the [latest release](https://github.com/focustense/FishingBuddy/releases). Make sure you download the `FishingBuddy x.y.z.zip` file, **not** the source code.
-3. Open the .zip file and extract the `FishingBuddy` folder into your `Stardew Valley\Mods` folder.
+2. Download the [latest release](https://github.com/focustense/StardewFishingSea/releases). Make sure you download the `FishinC x.y.z.zip` file, **not** the source code.
+3. Open the .zip file and extract the `FishinC` folder into your `Stardew Valley\Mods` folder.
 4. Launch the game!
 
 ## Features

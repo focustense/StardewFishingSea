@@ -13,5 +13,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Initial release.
 - [Add bullet points for alpha features.]
 
-[Unreleased]: https://github.com/focustense/FishingBuddy/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/focustense/FishingBuddy/tree/v0.1.0
+[Unreleased]: https://github.com/focustense/StardewFishingSea/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/focustense/StardewFishingSea/tree/v0.1.0
