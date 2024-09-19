@@ -31,6 +31,9 @@
   "BuiltinRuleSets.Hard.Title": "Legend",
   "BuiltinRuleSets.Hard.Description": "Most features require high-level perks or fishing mastery - and even then, you'll need to gear up and react quickly.",
 
+  // GMCM. We don't really "use" GMCM except to add a stub, so this is placeholder text.
+  "Gmcm.Placeholder": "If you're reading this text, then something went wrong during mod startup and we aren't able to show the settings menu right now. You can access the settings directly while in-game by pressing {{keybind}}.",
+
   // In-game UI.
   "HudMessage.Disabled": "Fishing overlays disabled",
   "HudMessage.Enabled": "Fishing overlays enabled",

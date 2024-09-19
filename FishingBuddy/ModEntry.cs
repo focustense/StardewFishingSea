@@ -1,5 +1,7 @@
 ﻿using FishingBuddy.Configuration;
 using FishingBuddy.Data;
+using FishingBuddy.Integrations;
+using FishingBuddy.Integrations.Gmcm;
 using FishingBuddy.Patches;
 using FishingBuddy.Predictions;
 using FishingBuddy.UI;
@@ -68,6 +70,7 @@ internal sealed class ModEntry : Mod
         helper.Events.Display.RenderedHud += Display_RenderedHud;
         helper.Events.Display.RenderedStep += Display_RenderedStep;
         helper.Events.GameLoop.DayStarted += GameLoop_DayStarted;
+        helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
         helper.Events.GameLoop.ReturnedToTitle += GameLoop_ReturnedToTitle;
         helper.Events.GameLoop.SaveLoaded += GameLoop_SaveLoaded;
         helper.Events.GameLoop.TimeChanged += GameLoop_TimeChanged;
@@ -139,6 +142,12 @@ internal sealed class ModEntry : Mod
         RefreshForCurrentLocation();
     }
 
+    private void GameLoop_GameLaunched(object? sender, GameLaunchedEventArgs e)
+    {
+        Apis.LoadAll(Helper.ModRegistry);
+        GmcmIntegration.Register(ModManifest, () => data, configContainer);
+    }
+
     private void GameLoop_ReturnedToTitle(object? sender, ReturnedToTitleEventArgs e)
     {
         splash.ResetAllScreens();
@@ -194,16 +203,12 @@ internal sealed class ModEntry : Mod
             Helper.Input.SuppressActiveKeybinds(Config.CatchPreviewToggleKeybind);
         }
         else if (
-            e.Pressed.Contains(SButton.F7)
-            && Context.IsPlayerFree
+            Context.IsPlayerFree
             && Game1.activeClickableMenu is null
+            && Config.SettingsKeybind.JustPressed()
         )
         {
             Game1.activeClickableMenu = new SettingsMenu(data, configContainer);
-        }
-        else if (e.Pressed.Contains(SButton.F9))
-        {
-            CatchPreview.Update(true);
         }
     }
 

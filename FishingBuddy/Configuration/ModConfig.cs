@@ -66,4 +66,10 @@ public class ModConfig
     /// </summary>
     public NineGridPlacement SeededRandomFishHudPlacement { get; set; } =
         new(Alignment.Start, Alignment.Start);
+
+    /// <summary>
+    /// Keybind for bringing up the mod settings, in case of a problem with GMCM.
+    /// </summary>
+    public KeybindList SettingsKeybind { get; set; } =
+        new(new Keybind(SButton.LeftControl, SButton.F7));
 }

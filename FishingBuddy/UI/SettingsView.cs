@@ -9,9 +9,14 @@ namespace FishingBuddy.UI;
 /// <summary>
 /// Mod configuration view; used in place of GMCM page.
 /// </summary>
+/// <param name="data">Current mod data.</param>
 /// <param name="configContainer">Configuration container for the mod.</param>
-internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> configContainer)
-    : WrapperView
+/// <param name="close">Action to close the containing menu.</param>
+internal class SettingsView(
+    ModData data,
+    IConfigurationContainer<ModConfig> configContainer,
+    Action close
+) : WrapperView
 {
     private const int SLIDER_WIDTH = 300;
 
@@ -241,8 +246,7 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
 
     private void Close()
     {
-        Game1.playSound("bigDeSelect");
-        Game1.activeClickableMenu = null;
+        close();
     }
 
     private Button CreateActionButton(string text, Action onLeftClick)
