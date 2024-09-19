@@ -20,7 +20,7 @@ internal record CatchPrediction(Point Tile, string FishId);
 /// Predicts the fish catches in a local area.
 /// </summary>
 /// <param name="configSelector">Function to get the current mod config.</param>
-internal class CatchPreview(Func<ModConfig> configSelector)
+internal class CatchPreview(Func<ModConfig> configSelector, params IFishSideEffect[] sideEffects)
 {
     /// <summary>
     /// Whether or not predictions are enabled.
@@ -185,22 +185,39 @@ internal class CatchPreview(Func<ModConfig> configSelector)
         var location = Game1.currentLocation;
         var fishingTiles = GetTilesInRadius(inputs.PlayerTile, radius)
             .Where(tile => location.isTileOnMap(tile) && location.isTileFishable(tile.X, tile.Y));
+        var currentSideEffects = sideEffects
+            .Where(e => e.AppliesTo(Game1.player, location))
+            .ToArray();
         foreach (var tile in fishingTiles)
         {
             var distanceToLand = FishingRod.distanceToLand(tile.X, tile.Y, location);
-            var fish = location.getFish(
-                millisecondsAfterNibble: 0.0f, // Unused since a very long time ago
-                bait: inputs.BaitId ?? "", // Unused now, looks like it might get used again
-                baitPotency: 0.0f, // Unused and even documented as unused
-                waterDepth: distanceToLand, // Looks like SDV repurposed "depth" to "distance"
-                who: Game1.player,
-                bobberTile: tile.ToVector2()
-            );
-            if (fish is not null)
+            foreach (var sideEffect in currentSideEffects)
             {
-                tiles.Add(new(tile, fish.QualifiedItemId));
+                sideEffect.Snapshot(Game1.player);
             }
-            rng.Rewind();
+            try
+            {
+                var fish = location.getFish(
+                    millisecondsAfterNibble: 0.0f, // Unused since a very long time ago
+                    bait: inputs.BaitId ?? "", // Unused now, looks like it might get used again
+                    baitPotency: 0.0f, // Unused and even documented as unused
+                    waterDepth: distanceToLand, // Looks like SDV repurposed "depth" to "distance"
+                    who: Game1.player,
+                    bobberTile: tile.ToVector2()
+                );
+                if (fish is not null)
+                {
+                    tiles.Add(new(tile, fish.QualifiedItemId));
+                }
+            }
+            finally
+            {
+                foreach (var sideEffect in currentSideEffects)
+                {
+                    sideEffect.Undo(Game1.player);
+                }
+                rng.Rewind();
+            }
         }
     }
 

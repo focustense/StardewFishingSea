@@ -3,7 +3,6 @@ using FishingBuddy.Data;
 using FishingBuddy.Patches;
 using FishingBuddy.Predictions;
 using FishingBuddy.UI;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
@@ -45,7 +44,7 @@ internal sealed class ModEntry : Mod
     // Constructor is only to initialize certain lazy-loaders.
     public ModEntry()
     {
-        catchPreview = new(() => new CatchPreview(() => Config));
+        catchPreview = new(() => new CatchPreview(() => Config, new NutDropSideEffect()));
         seedFishPreview = new(() => new SeedFishInfoView());
         fishingState = new(() =>
         {
