@@ -9,7 +9,7 @@ namespace FishingBuddy.UI;
 /// </summary>
 /// <param name="configContainer">Configuration container for the mod.</param>
 internal class SettingsMenu(ModData data, IConfigurationContainer<ModConfig> configContainer)
-    : ViewMenu<SettingsView>
+    : ViewMenu<SettingsView>(gutter: new(Top: 16, Bottom: 80))
 {
     protected override SettingsView CreateView()
     {

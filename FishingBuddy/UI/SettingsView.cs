@@ -208,7 +208,12 @@ internal class SettingsView(ModData data, IConfigurationContainer<ModConfig> con
             BorderThickness = UiSprites.MenuBorderThickness,
             Content = new Lane()
             {
-                Layout = LayoutParameters.FixedSize(800, 950),
+                Layout = new()
+                {
+                    Width = Length.Px(800),
+                    Height = Length.Stretch(),
+                    MaxHeight = 1200,
+                },
                 Orientation = Orientation.Vertical,
                 Children = [header, separator, mainContentScrollable],
             },
