@@ -1,6 +1,7 @@
-﻿using HarmonyLib;
+﻿using System.Diagnostics;
+using System.Reflection;
+using HarmonyLib;
 using StardewValley.Internal;
-using StardewValley.Locations;
 using StardewValley.Pathfinding;
 
 namespace FishingBuddy.Patches;
@@ -9,10 +10,14 @@ internal static class Patcher
 {
     public static void ApplyAll(string modId)
     {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
         var harmony = new Harmony(modId);
         ApplyItemQueryFixes(harmony);
         ApplyFishRandomizationPatches(harmony);
         ApplyCharacterPatches(harmony);
+        stopwatch.Stop();
+        PatchState.Log($"Applying patches took {stopwatch.ElapsedMilliseconds} ms");
     }
 
     private static void ApplyFishRandomizationPatches(Harmony harmony)
@@ -47,10 +52,23 @@ internal static class Patcher
         {
             harmony.Patch(orderMethod, transpiler: allGameRandomRefsTranspilerMethod);
         }
-        harmony.Patch(
-            AccessTools.Method(
-                typeof(MineShaft),
-                nameof(MineShaft.getFish),
+        var locationAssemblyName = typeof(GameLocation).Assembly.GetName();
+        var locationTypes = AppDomain
+            .CurrentDomain.GetAssemblies()
+            .Where(a =>
+                a.GetReferencedAssemblies()
+                    .Any(name =>
+                        AssemblyName.ReferenceMatchesDefinition(name, locationAssemblyName)
+                    )
+            )
+            .Prepend(typeof(GameLocation).Assembly)
+            .SelectMany(a => a.GetTypes())
+            .Where(type => typeof(GameLocation).IsAssignableFrom(type));
+        foreach (var locationType in locationTypes)
+        {
+            var getFishMethod = AccessTools.DeclaredMethod(
+                locationType,
+                nameof(GameLocation.getFish),
                 [
                     typeof(float), // millisecondsAfterNibble
                     typeof(string), // bait
@@ -60,9 +78,17 @@ internal static class Patcher
                     typeof(Vector2), // bobberTile
                     typeof(string), // locationName
                 ]
-            ),
-            transpiler: allGameRandomRefsTranspilerMethod
-        );
+            );
+            if (getFishMethod is null)
+            {
+                continue;
+            }
+            harmony.Patch(getFishMethod, transpiler: allGameRandomRefsTranspilerMethod);
+            PatchState.Log(
+                $"Patched {locationType.Name}.{nameof(GameLocation.getFish)}",
+                LogLevel.Debug
+            );
+        }
     }
 
     private static void ApplyItemQueryFixes(Harmony harmony)
