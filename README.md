@@ -2,11 +2,14 @@
 
 (Say it quickly.)
 
-<img align="left" src="media/fishing-can-be-fun.png" alt="Fishing Can Be Fun" />
+<p>
+  <img align="left" src="media/fishing-can-be-fun.png" alt="Fishing Can Be Fun" />
+  <br clear="left"/>
+</p>
 
 ## Introduction
 
-> *"Arrr, sometimes I wonder why I bother plunderin' at all."*
+> *"Arrr, sometimes I wonder why I bother plunderin' at all."*  
 >     -- Captain Horatio McCallister
 
 Stardew's fishing is actually a great mechanic. It's one of the few minigames available throughout the game in which your planning, coordination and overall skill as a _player_ can make a big difference. Version 1.6 added new mechanics to make fishing even more useful, well into the mid-game period.
@@ -21,7 +24,7 @@ The core [features](#features) of AFS include:
 - [Catch predictions](#predictable-catches): See what you're about to catch, before you cast your line. These are **true predictions**, not "distribution info/statistics" about what you _might_ catch. Don't waste your precious tackle and targeted bait!
 - [Jelly predictions](#jelly-countdowns) with countdown: Know when you can score those rare sea/cave jellies, and combine with catch predictions to be able to reliably score multiple jellies in a single in-game day without having to save-scum.
 - [Fishing timescale](#fishing-timescale): Watch the minutes and NPCs fly by as you wait for a bite. This is a no-cheat solution to fishing boredom; it takes exactly the same number of in-game minutes to get a bite -- i.e. based on your bait, tackle, bubbles, etc. -- but game time will run up to 10x faster, so it feels nearly instant to you. Time automatically slows back to normal speed once a fish bites, so you can react quickly enough to start the minigame and don't actually waste any time.
-- [Balance and progression](#balance-progression): Choose from one of three built-in difficulty settings or customize your own.
+- [Balance and progression](#balanceprogression): Choose from one of three built-in difficulty settings or customize your own.
 
 ## Installation
 
@@ -38,10 +41,10 @@ Most of AFS's features are predictive in some way, except for [timescaling](#fis
 
 ### Improved Bubbles
 
-> *"Ah, the exact center of the Atlantic Ocean. This seems the logical place for fish to congregate!"*
+> *"Ah, the exact center of the Atlantic Ocean. This seems the logical place for fish to congregate!"*  
 >     -- Prof. Hubert J. Farnsworth
 
-[Fishing bubbles](https://stardewvalleywiki.com/Fishing#Bubbles), internally called "splash points", cause fish to bite 4 times faster. This is immensely useful in the early game, when you cannot use spinners and might not have access to high-quality bait (or any bait at all), and when you are trying to level-up your fishing skill. However, the location and duration of these splash points is randomized, and to maximize catches/profits, you must consider whether the extra catches from one will be worth the time to walk back and forth and possibly have lower-quality catches.
+[Fishing bubbles](https://stardewvalleywiki.com/Fishing#Bubbles), internally called "splash points", cause fish to bite 4 times faster. This is immensely useful in the early game, when you cannot use spinners and may not have access to high-quality bait (or any bait at all), and when you are trying to level-up your fishing skill. However, the location and duration of these splash points is randomized, and to maximize catches/profits, you must consider whether the extra catches from one will be worth the time to walk back and forth and possibly have lower-quality catches.
 
 This is all fine and good, but the game gives no indication of how long any spot will last; there might be less than an hour left, and it's gone by the time you get there. On the other hand, a "lucky" spot could last half a day or even more. This information is 100% predetermined and can be easily viewed in tools like the [Map Predictor](https://www.nexusmods.com/stardewvalley/mods/6614), but without using offline tools and/or restarting the day several times, there was no way to clearly visualize this within the game and make smart tactical decisions -- until now.
 
@@ -61,7 +64,10 @@ Stardew 1.6 introduced a certain type of fishing tackle that is widely regarded 
 
 Sometimes it is more than just regions or the current state of the RNG; there may even be differences between tiles in the same area:
 
-<img align="left" src="media/screenshot-tile-variation.png" alt="Fish Tile Distance Variance" />
+<p>
+  <img align="left" src="media/screenshot-tile-variation.png" alt="Fish Tile Distance Variance" />
+  <br clear="left"/>
+</p>
 
 AFS does not create this variation, which already exists in the game; it simply makes it visible to you, so that you can make informed decisions about where to cast from, and how far. Maximum casts aren't always the best option if you're trying to catch a specific fish!
 
@@ -71,7 +77,7 @@ AFS does not create this variation, which already exists in the game; it simply 
 
 ### Freezing and Respawn
 
-> *"Well now, that is the dangdest thing -- this is the same fish I just threw back!"*
+> *"Well now, that is the dangdest thing -- this is the same fish I just threw back!"*  
 >     -- Hank Hill
 
 A Fishing Sea provides some important options to control "respawning" of fish.
@@ -80,11 +86,11 @@ The vanilla behavior is actually continuous respawn; that is, the fish you will 
 
 In other words, while AFS intentionally does not affect the _logic_, or the overall _distribution_ of fish in a given location, it puts itself in charge of how often the result of any individual fishing attempt can change.
 
-You, the player, have three important choices to make, two of which are considered to be [difficulty settings](#balance-progression) and one of which is neutral.
+You, the player, have three important choices to make, two of which are considered to be [difficulty settings](#balanceprogression) and one of which is neutral.
 
 #### Freeze on Cast
 
-> *"You and your worms are fishing in the past, Hank, in the days of black-and-white television and a democratically elected Congress."*
+> *"You and your worms are fishing in the past, Hank, in the days of black-and-white television and a democratically elected Congress."*  
 >     -- Dale Gribble
 
 Should fish be allowed to respawn after you've cast your line -- but before you've hooked one -- or should your catch be "locked in" as soon as you cast?
@@ -99,7 +105,7 @@ Freezing is considered the "easier" option. If the setting is disabled, then it 
 
 #### Respawn on Cancel
 
-> *"Yarrr, not a looker among 'em."*
+> *"Yarrr, not a looker among 'em."*  
 >     -- Captain Horatio McCallister
 
 Fish always respawn immediately when you catch a fish, or lose a fish (fail the minigame).
@@ -112,7 +118,7 @@ This setting is usually paired with *Freeze on cast*, so that you don't blow thr
 
 #### Respawn Interval
 
-> *"Reel it in before I keelhaul ya!"*
+> *"Reel it in before I keelhaul ya!"*  
 >     -- Eugene H. Krabs
 
 Controls the *maximum* time between fish respawns, except when frozen by the [Freeze on cast](#freeze-on-cast) setting.
@@ -130,7 +136,7 @@ Respawn interval is not considered a difficulty setting, because even though it 
 
 ### Jelly Countdowns
 
-> *"I came over to see if you wanted to go jellyfishing, but I can see you're busy having an episode."*
+> *"I came over to see if you wanted to go jellyfishing, but I can see you're busy having an episode."*  
 >     -- SpongeBob
 
 > [!WARNING]
@@ -139,26 +145,32 @@ Respawn interval is not considered a difficulty setting, because even though it 
 
 Update 1.6 introduced "Jellies" to the game, which provide some nice-to-have buffs in early gameplay, but are most notable for being required crafting ingredients for the Fish Smoker. Consequently, one of the most crucial early-game progression items is gated behind some of the most irritating and frustrating RNG found in the entire game.
 
-Catching a jelly requires passing a "seeded random" check based on the number of fish caught. This seeded random is then *further* limited by a normal random check using the spawn chance. Consequently,  what might appear to be a "chance" of 10% for a cave jelly is actually closer to 1-2%. You might spend the whole day fishing and never obtain a single one.
+Catching a jelly requires passing a "seeded random" check based on the number of fish caught. This seeded random is then *further* limited by a normal random check using the spawn chance. As a result, what might appear to be a "chance" of 10% for a cave jelly is actually closer to 1-2%. You could spend the whole day fishing and never obtain a single one.
 
-This might have been the intended mechanic, but for many players, it feels all too much like the JRPG style of "grind for hours on end until you get this one rare item". AFS gives you a better way to "farm" these items without eliminating the entire challenge: a HUD overlay that informs you whether the jelly is available on the next "catch", or if not, how many other fish must be caught first:
+This may have been the intended mechanic, but for many players, it feels all too much like the JRPG style of "grind for hours on end until you get this one rare item". AFS gives you a better way to "farm" these items without eliminating the entire challenge: a HUD overlay that informs you whether the jelly is available on the next "catch", or if not, how many other fish must be caught first:
 
-<img align="left" src="media/screenshot-jelly-hud.png" alt="Jelly HUD" />
+<p>
+  <img align="left" src="media/screenshot-jelly-hud.png" alt="Jelly HUD" />
+  <br clear="left"/>
+</p>
 
 This indicator means that Cave Jellies are found in the region, but that 2 more fish must be caught before any can spawn. On its own, this is purely informational, with no strategic value. However, it can be combined with [fish predictions](#predictable-catches) to know for certain when a catch will happen:
 
-<img align="left" src="media/screenshot-jelly-fishing-with-hud.png" alt="Jelly Fishing with Jelly HUD" />
+<p>
+  <img align="left" src="media/screenshot-jelly-fishing-with-hud.png" alt="Jelly Fishing with Jelly HUD" />
+  <br clear="left"/>
+</p>
 
 The final piece of the puzzle is to make effective use of the [Freezing and Respawn](#freezing-and-respawn) settings to actually catch one, by either:
 
 - Waiting for the next respawn -- "wasting" in-game time in order to get a guaranteed catch; or
-- Repeatedly [casting and cancelling](#respawn-on-cancel), or casting onto land, to force an immediate respawn, if you've enabled this in the [balance](#balance-progression) settings. This method allows you to much more quickly lock in a jelly spawn, but at a fairly steep energy cost over 10-20 casts.
+- Repeatedly [casting and cancelling](#respawn-on-cancel), or casting onto land, to force an immediate respawn, if you've enabled this in the [balance](#balanceprogression) settings. This method allows you to much more quickly lock in a jelly spawn, but at a fairly steep energy cost over 10-20 casts.
 
 Whether or not to enable this, and what strategy to use, will be a matter of personal preference, but most players will probably find it preferable to repeatedly restarting the day until the RNG gods bless them with 2 or 3 jellies over an entire day of fishing for mostly low-quality fish and trash.
 
 ### Fishing Timescale
 
-> _"Give a man a fish and he will eat for a day; teach a man to fish and he will sit in a boat and drink beer all day."_
+> _"Give a man a fish and he will eat for a day; teach a man to fish and he will sit in a boat and drink beer all day."_  
 >     -- Ancient Proverb
 
 Waiting for fish to bite not only uses up a lot of in-game time, it takes up your actual, real time. Over many playthroughs, that's dozens of hours you'll never get back, of just sitting there, staring at the screen, waiting for something to happen.
@@ -177,12 +189,15 @@ The default scaling is set to 4x, which makes many bites sub-second, and even th
 
 ### Balance/Progression
 
-> *"Fairly warned be thee, says I."*
+> *"Fairly warned be thee, says I."*  
 >     -- Captain Horatio McCallister
 
 Every feature of AFS is configurable, but the settings that will tend to have the most impact on any given playthrough are those for balance and/or progression.
 
-<img align="left" width="500" src="media/screenshot-settings-custom.png" alt="Difficulty Settings" />
+<p>
+  <img align="left" width="500" src="media/screenshot-settings-custom.png" alt="Difficulty Settings" />
+  <br clear="left"/>
+</p>
 
 The default difficulty is "Catfish", which will require you to make serious investments in fishing skill and gear before you can use the more powerful features (mainly, predictions).
 
@@ -205,7 +220,10 @@ Most settings have already been covered in previous sections, but to recap:
 
 A Fishing Sea uses its own, custom configuration UI.
 
-<img align="left" src="media/screenshot-settings.png" alt="AFS Configuration" style="zoom:50%;" />
+<p>
+  <img align="left" src="media/screenshot-settings.png" alt="AFS Configuration" height="800" />
+  <br clear="left"/>
+</p>
 
 This UI can be accessed from GMCM's main menu, like any other mod. If for some reason you are unable to get to this menu through GMCM, then you can press the hotkey <kbd>Ctrl</kbd>+<kbd>F7</kbd> in game, or change the `SettingsKeybind` value in the `config.json` to any other preferred combination(s).
 
@@ -249,15 +267,15 @@ Other settings in `config.json` include:
 * `CatchPreviewToggleKeybind`: Key/gamepad combinations that will turn prediction features on/off. Note: despite what the name suggests, this controls *all* prediction features including [splash info](#improved-bubbles), [catch predictions](#predictable-catches) and [seeded-random](#jelly-countdowns) (jelly) info/countdowns. In the UI it is more accurately referred to as "Overlay hotkeys".
 * `EnablePreviewsOnLoad`: If `true`, automatically turns on prediction features when a game is started or loaded. The `CatchPreviewToggleKeybind` can still be used to toggle it off and back on again.
 * `FishingTimeScale`: Multiplier used for [fishing timescale](#fishing-timescale). Equivalent to the "Waiting Speed" in the settings menu.
-* `RespawnInterval`: Time between fish respawns; see [balance/progression](#balance-progression).
-* `Rules`: Difficulty settings. See [balance/progression](#balance-progression) for specifics.
+* `RespawnInterval`: Time between fish respawns; see [balance/progression](#balanceprogression).
+* `Rules`: Difficulty settings. See [balance/progression](#balanceprogression) for specifics.
 * `RuleSetName`: The name of the built-in rule set that was last selected. Changing this won't override the actual `Rules`; however, it may confuse the settings menu if the `Rules` don't match. If setting up custom rules, this field should be an empty string.
 * `SeededRandomFishHudPlacement`: The on-screen position of the [seeded random (Jelly) info/countdown](#jelly-countdowns). It is much easier to position this using the settings menu.
 * `SettingsKeybind`: Hotkey for bringing up the settings menu; not shown in the settings menu itself. Should only be needed if a future GMCM update breaks the integration.
 
 ## Compatibility
 
-> *"Well, it turns out I loved her, but I wasn't* in love *with her."*
+> *"Well, it turns out I loved her, but I wasn't* in love *with her."*  
 >     -- Philip J. Fry
 
 A Fishing Sea has to do some [creative patching](#technical-mumbo-jumbo) in order to do its thing, and as a result, it will not be compatible with every other mod in the wild. It is stable in the author's personal list of ~100 mods, but testing with every user's mod lists of (in some cases) 1000+ mods is infeasible.
@@ -269,7 +287,7 @@ However, some general guidelines should help predict whether any given mod will 
 AFS modifies the following in-game functions:
 
 | Feature                          | Function(s) Modified                                         | Reasons                                                      |
-| -------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| :------------------------------- | :----------------------------------------------------------- | :------------------------------------------------------------ |
 | Splash Durations and Predictions | None                                                         | Splashes are already predictable, so this feature merely needs to recreate the vanilla logic. |
 | Catch Predictions                | - `GameLocation.GetFishFromLocationData`<br />- `GameLocation.getFish` (for **all** detected location types, but most notably `MineShaft`)<br />- `ItemQueryResolver.TryResolve` | [Capture/replay of RNG state.](#arent-accurate-fish-predictions-impossible) `ItemQueryResolver` has a vanilla bug causing it to ignore the context's `Random`. |
 | Jelly Predictions                | None                                                         | Uses information already in `LocationData` and some recreated vanilla logic. |
@@ -279,20 +297,20 @@ There are **no** changes made to the fishing minigame (`BobberBar`), and the cha
 
 As a result, AFS is _probably_ compatible with most mods that:
 
-- Change the fishing minigame, e.g. make fish move slower, take longer to escape, etc.
+- Change the fishing minigame, e.g. make fish move slower, take longer to escape, etc.  
   Example: [Eidee Easy Fishing](https://www.nexusmods.com/stardewvalley/mods/4806), [Skip Fishing Minigame](https://www.nexusmods.com/stardewvalley/mods/2697)
-- Add new fish species to vanilla game locations, or add new locations with new fish.
+- Add new fish species to vanilla game locations, or add new locations with new fish.  
   Examples: [More New Fish](https://www.nexusmods.com/stardewvalley/mods/3578), [Ridgeside Village](https://www.nexusmods.com/stardewvalley/mods/7286)
-- Change fish probabilities, availability rules, sell value, etc. via Content Patcher.
+- Change fish probabilities, availability rules, sell value, etc. via Content Patcher.  
   Example: [Fishing Made Easy Suite](https://www.nexusmods.com/stardewvalley/mods/3623)
-- Add or change bait, tackle or other fishing gear; AFS uses the game's own fishing logic for predictions and does not hard-code any assumptions about these.
+- Add or change bait, tackle or other fishing gear; AFS uses the game's own fishing logic for predictions and does not hard-code any assumptions about these.  
   Example: [Everlasting Baits and Unbreakable Tackles](https://www.nexusmods.com/stardewvalley/mods/2360) (but see [Patching: Constants](#constants))
-- Provide high-level, location-based spawn information *without* simulating catches.
+- Provide high-level, location-based spawn information *without* simulating catches.  
   Example: [Almanac](https://www.nexusmods.com/stardewvalley/mods/11022)
 
 AFS **might** be compatible with mods that:
 
-- Automate all or part of the minigame.
+- Automate all or part of the minigame.  
   Example: [Fishing Assistant](https://www.nexusmods.com/stardewvalley/mods/5815), [Auto Fishing](https://www.nexusmods.com/stardewvalley/mods/21339)
 
   (These mods aren't really "conceptually" compatible, since predictions are of little value if you're going to have the game just fish constantly for you, but in a _technical_ sense, there are probably no major issues as long as they don't alter the order or accuracy of `FishingRod` states like `isFishing`)
@@ -301,28 +319,28 @@ AFS **might** be compatible with mods that:
 
 AFS is **almost certainly incompatible** with mods that:
 
-- Completely replace the vanilla fishing experience, including the randomization.
-  _(Supporting these would effectively entail a total rewrite of this mod, designed exclusively for theirs.)_
+- Completely replace the vanilla fishing experience, including the randomization.  
+  _(Supporting these would effectively entail a total rewrite of this mod, designed exclusively for theirs.)_  
   Example: [Teh's Fishing Overhaul](https://www.nexusmods.com/stardewvalley/mods/866)
-- Add non-predictive tile overlays.
-  _(Won't interfere with the predictions themselves, but will probably fight for visibility/precedence of the [fish prediction](#predictable-catches) tile overlays.)_
+- Add non-predictive tile overlays.  
+  _(Won't interfere with the predictions themselves, but will probably fight for visibility/precedence of the [fish prediction](#predictable-catches) tile overlays.)_  
   Example: [Visible Fish](https://www.nexusmods.com/stardewvalley/mods/8897)
-- Run "simulated" fishing passes to display distribution info.
-  _(Since AFS takes over the randomness, these mods will no longer see the real distribution.)_
+- Run "simulated" fishing passes to display distribution info.  
+  _(Since AFS takes over the randomness, these mods will no longer see the real distribution.)_  
   Example: [Fishing Info Overlays](https://www.nexusmods.com/stardewvalley/mods/8970)
 
 For some of these mods, adding compatibility might be technically feasible, but is very low on the list of priorities, since AFS already provides the same functionality but with greater detail and accuracy.
 
 ### Patching
 
-> *"Yarrr, I've been meaning to paint over that."*
+> *"Yarrr, I've been meaning to paint over that."*  
 >     -- Captain Horatio McCallister
 
 Found an incompatibility with a mod that ought to work? You're welcome to submit a PR; or, if the mod in question is _your_ mod, make use of AFS's compatibility features.
 
 #### Constants
 
-> *"Arrr! The laws o' science be a harsh mistress."*
+> *"Arrr! The laws o' science be a harsh mistress."*  
 >     -- Bender B. Rodriguez
 
 A Fishing Sea makes several assumptions about things that are normally constant in the game, but which some of the more unusual mods might try to change via Harmony patching, such as the number of hours in a day, the decay rate of splash spots, the rules around [frenzies](https://stardewvalleywiki.com/Fishing#Fish_Frenzies), or even which farms allow fishing (e.g. if adding a custom farm type).
@@ -331,10 +349,10 @@ To the greatest extent possible, every one of these "constants" has its own prop
 
 #### Rules and Conditions
 
-> *"Argh, ye mutinous sea dogs! From now on, I be requirin' hair nets."*
+> *"Argh, ye mutinous sea dogs! From now on, I be requirin' hair nets."*  
 >     -- Captain Horatio McCallister
 
-If the available [difficulty/progression](#balance-progression) options don't work for you, or you'd like to extend them in your own mod (e.g. you are adding a custom skill, custom tackle, etc.) then this can easily be accomplished with SMAPI or Content Patcher.
+If the available [difficulty/progression](#balanceprogression) options don't work for you, or you'd like to extend them in your own mod (e.g. you are adding a custom skill, custom tackle, etc.) then this can easily be accomplished with SMAPI or Content Patcher.
 
 ##### Adding/patching a condition
 
@@ -342,9 +360,9 @@ If the available [difficulty/progression](#balance-progression) options don't wo
 
 In addition to the key and GSQ, you'll need to provide your own localized/translated text for the following:
 
-- `title`: The name as displayed in the drop-down list in [custom settings](#balance-progression), e.g. "Fishing Level 5".
-- `requirementRuleText`: Sentence-style text for a requirement line in [standard settings](#settings), e.g. "require Fishing Level 5".
-- `visibilityRuleText`: Sentence-style text for a visibility line in [standard settings](#settings), e.g. "are visible at Fishing Level 5".
+- `title`: The name as displayed in the drop-down list in [custom settings](#balanceprogression), e.g. "Fishing Level 5".
+- `requirementRuleText`: Sentence-style text for a requirement line (always pluralized) in [standard settings](#settings), e.g. "require Fishing Level 5".
+- `visibilityRuleText`: Sentence-style text for a visibility line (always pluralized) in [standard settings](#settings), e.g. "are visible at Fishing Level 5".
 
 > [!TIP]
 >
@@ -375,7 +393,7 @@ The various interfaces are spread across multiple files in the mod's source code
 
 ## Technical Mumbo-Jumbo
 
-> *"Mumbo? Perhaps. Jumbo? Perhaps not!"*
+> *"Mumbo? Perhaps. Jumbo? Perhaps not!"*  
 >     -- Superstitious Robot
 
 ### Aren't accurate fish predictions impossible?
@@ -398,7 +416,7 @@ Game speed is the "easy" part, and speeding up the clock operates on the same pr
 
 However, mods that alter time are usually _slowing it down_, or speeding it up by a modest amount. When dealing with speedups of 4x or even 10x, a lot of things can break, including NPC schedules and pathfinding. Plus, it's just more fun to watch the entire world in fast-forward, isn't it?
 
-Consequently, AFS introduces several patches to:
+To this end, AFS introduces several patches to:
 
 - Increase the movement speed of characters (NPCs, animals, etc.) without directly writing to their `speed`, because the game is constantly adjusting their speed and overwriting it can cause those characters to get stuck;
 - Reduce the *real time delays* of characters, such as when they are blocked by the player or an obstacle;
