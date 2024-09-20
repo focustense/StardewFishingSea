@@ -3,6 +3,17 @@
 namespace FishinC.Predictions;
 
 /// <summary>
+/// Public and internal API for registering side effects.
+/// </summary>
+public interface ISideEffectsApi
+{
+    /// <summary>
+    /// Registers a new side effect.
+    /// </summary>
+    void Add(IFishSideEffect sideEffect);
+}
+
+/// <summary>
 /// Represents an unwanted side effect that can happen as a result of
 /// <see cref="GameLocation.getFish"/> in the context of predictions.
 /// </summary>

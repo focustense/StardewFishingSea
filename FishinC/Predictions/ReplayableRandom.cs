@@ -55,6 +55,20 @@ internal class ReplayableRandom : Random
     }
 
     /// <summary>
+    /// Creates a disposable scope that will automatically <see cref="Rewind"/>.
+    /// </summary>
+    /// <remarks>
+    /// Does not automatically take a new snapshot. <see cref="Snapshot"/> must be called explicitly
+    /// beforehand in order to set the checkpoint.
+    /// </remarks>
+    /// <returns>An <see cref="IDisposable"/> instance which, when disposed, will rewind to the last
+    /// <see cref="Snapshot"/>.</returns>
+    public IDisposable Scope()
+    {
+        return new ReplayableRandomScope(this);
+    }
+
+    /// <summary>
     /// Takes a snapshot of the current random state, so that the next <see cref="Rewind"/> will
     /// return to this state.
     /// </summary>
@@ -116,6 +130,19 @@ internal class ReplayableRandom : Random
         }
         Impl = thisImpl;
         return true;
+    }
+}
+
+/// <summary>
+/// Simple wrapper around <see cref="ReplayableRandom"/> that performs a
+/// <see cref="ReplayableRandom.Rewind"/> on dispose.
+/// </summary>
+internal class ReplayableRandomScope(ReplayableRandom random) : IDisposable
+{
+    public void Dispose()
+    {
+        random.Rewind();
+        GC.SuppressFinalize(this);
     }
 }
 

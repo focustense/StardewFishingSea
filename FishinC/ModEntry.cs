@@ -29,32 +29,30 @@ internal sealed class ModEntry : Mod
 
     private static readonly Vector2 SplashOverlayMaxSize = new(500, 500);
 
-    private readonly Dictionary<string, IReadOnlyList<Splash>> splashSchedules = [];
-
-    // Initialized in Entry
-    private ConfigurationContainer<ModConfig> configContainer = null!;
-    private ModData data = null!;
-    private static TimeAccelerator timeAccelerator = null!;
-
-    private readonly PerScreen<CatchPreview> catchPreview;
-    private readonly PerScreen<FishingState> fishingState;
-    private readonly PerScreen<SeedFishInfoView> seedFishPreview;
     private readonly PerScreen<Splash?> splash = new();
     private readonly PerScreen<SpeechBubble<SplashInfoView>> splashOverlay =
         new(CreateSplashOverlay);
+    private readonly Dictionary<string, IReadOnlyList<Splash>> splashSchedules = [];
 
-    // Constructor is only to initialize certain lazy-loaders.
-    public ModEntry()
+    // Initialized in Entry
+    private FishingApi api = null!;
+    private PerScreen<CatchPreview> catchPreview = null!;
+    private ConfigurationContainer<ModConfig> configContainer = null!;
+    private ModData data = null!;
+    private PerScreen<FishingState> fishingState = null!;
+    private PerScreen<SeedFishInfoView> seedFishPreview = null!;
+    private static TimeAccelerator timeAccelerator = null!;
+
+    public override void Entry(IModHelper helper)
     {
-        catchPreview = new(
-            () =>
-                new CatchPreview(
-                    () => Config,
-                    Monitor,
-                    new TimesFishedSideEffect(),
-                    new NutDropSideEffect()
-                )
-        );
+        I18n.Init(helper.Translation);
+        Quotes.Init(helper.Translation);
+        StardewUI.UI.Initialize(helper, Monitor);
+        data = new(helper);
+        configContainer = new(helper);
+        timeAccelerator = new(() => Config);
+        var sideEffects = new SideEffectRegistry(Monitor);
+        catchPreview = new(() => new CatchPreview(() => Config, sideEffects));
         seedFishPreview = new(() => new SeedFishInfoView());
         fishingState = new(() =>
         {
@@ -65,16 +63,7 @@ internal sealed class ModEntry : Mod
             state.Lost += FishingState_Lost;
             return state;
         });
-    }
-
-    public override void Entry(IModHelper helper)
-    {
-        I18n.Init(helper.Translation);
-        Quotes.Init(helper.Translation);
-        StardewUI.UI.Initialize(helper, Monitor);
-        data = new(helper);
-        configContainer = new(helper);
-        timeAccelerator = new(() => Config);
+        api = new(sideEffects);
 
         helper.Events.Display.RenderedHud += Display_RenderedHud;
         helper.Events.Display.RenderedStep += Display_RenderedStep;
@@ -105,6 +94,11 @@ internal sealed class ModEntry : Mod
             $"{ModManifest.UniqueID}_PLAYER_USING_TACKLE",
             Queries.PLAYER_USING_TACKLE
         );
+    }
+
+    public override object? GetApi()
+    {
+        return api;
     }
 
     private void Display_RenderedHud(object? sender, RenderedHudEventArgs e)

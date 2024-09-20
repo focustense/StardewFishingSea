@@ -21,11 +21,7 @@ internal record CatchPrediction(Point Tile, string FishId);
 /// <param name="configSelector">Function to get the current mod config.</param>
 /// <param name="monitor">Logger instance for the mod.</param>
 /// <param name="sideEffects">Known side effects to track and undo after each prediction.</param>
-internal class CatchPreview(
-    Func<ModConfig> configSelector,
-    IMonitor monitor,
-    params IFishSideEffect[] sideEffects
-)
+internal class CatchPreview(Func<ModConfig> configSelector, SideEffectRegistry sideEffects)
 {
     /// <summary>
     /// Whether or not predictions are enabled.
@@ -190,52 +186,22 @@ internal class CatchPreview(
         var location = Game1.currentLocation;
         var fishingTiles = GetTilesInRadius(inputs.PlayerTile, radius)
             .Where(tile => location.isTileOnMap(tile) && location.isTileFishable(tile.X, tile.Y));
-        var currentSideEffects = sideEffects
-            .Where(e => e.AppliesTo(Game1.player, location))
-            .ToArray();
         foreach (var tile in fishingTiles)
         {
+            using var randomScope = rng.Scope();
+            using var sideEffectScope = sideEffects.BeginScope(Game1.player, location);
             var distanceToLand = FishingRod.distanceToLand(tile.X, tile.Y, location);
-            foreach (var sideEffect in currentSideEffects)
+            var fish = location.getFish(
+                millisecondsAfterNibble: 0.0f, // Unused since a very long time ago
+                bait: inputs.BaitId ?? "", // Unused now, looks like it might get used again
+                baitPotency: 0.0f, // Unused and even documented as unused
+                waterDepth: distanceToLand, // Looks like SDV repurposed "depth" to "distance"
+                who: Game1.player,
+                bobberTile: tile.ToVector2()
+            );
+            if (fish is not null)
             {
-                sideEffect.Snapshot(Game1.player);
-            }
-            try
-            {
-                var fish = location.getFish(
-                    millisecondsAfterNibble: 0.0f, // Unused since a very long time ago
-                    bait: inputs.BaitId ?? "", // Unused now, looks like it might get used again
-                    baitPotency: 0.0f, // Unused and even documented as unused
-                    waterDepth: distanceToLand, // Looks like SDV repurposed "depth" to "distance"
-                    who: Game1.player,
-                    bobberTile: tile.ToVector2()
-                );
-                if (fish is not null)
-                {
-                    tiles.Add(new(tile, fish.QualifiedItemId));
-                }
-            }
-            finally
-            {
-                foreach (var sideEffect in currentSideEffects)
-                {
-                    // While it's very bad to fail undoing even one side effect, it's even worse to
-                    // fail all of them because one of them failed.
-                    try
-                    {
-                        sideEffect.Undo(Game1.player);
-                    }
-                    catch (Exception ex)
-                    {
-                        // This runs for every prediction on every update tick, so don't spam log
-                        // messages if one is consistently failing.
-                        monitor.LogOnce(
-                            $"Unexpected error while undoing {sideEffect.GetType().Name}: {ex}",
-                            LogLevel.Error
-                        );
-                    }
-                }
-                rng.Rewind();
+                tiles.Add(new(tile, fish.QualifiedItemId));
             }
         }
     }
