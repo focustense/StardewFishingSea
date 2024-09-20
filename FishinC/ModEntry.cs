@@ -46,7 +46,15 @@ internal sealed class ModEntry : Mod
     // Constructor is only to initialize certain lazy-loaders.
     public ModEntry()
     {
-        catchPreview = new(() => new CatchPreview(() => Config, new NutDropSideEffect()));
+        catchPreview = new(
+            () =>
+                new CatchPreview(
+                    () => Config,
+                    Monitor,
+                    new TimesFishedSideEffect(),
+                    new NutDropSideEffect()
+                )
+        );
         seedFishPreview = new(() => new SeedFishInfoView());
         fishingState = new(() =>
         {
@@ -80,7 +88,18 @@ internal sealed class ModEntry : Mod
         helper.Events.Player.Warped += Player_Warped;
 
         PatchState.Monitor = Monitor;
-        Patcher.ApplyAll(ModManifest.UniqueID);
+        try
+        {
+            Patcher.ApplyAll(ModManifest.UniqueID);
+        }
+        catch (Exception ex)
+        {
+            Monitor.Log(
+                $"Harmony patching failed; parts of the mod may function incorrectly.\n\n"
+                    + $"The specific exception was: {ex}",
+                LogLevel.Error
+            );
+        }
 
         GameStateQuery.Register(
             $"{ModManifest.UniqueID}_PLAYER_USING_TACKLE",

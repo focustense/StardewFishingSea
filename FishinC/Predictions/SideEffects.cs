@@ -83,3 +83,40 @@ public class NutDropSideEffect : IFishSideEffect
         }
     }
 }
+
+/// <summary>
+/// Side effect for logic dependent on number of times fished.
+/// </summary>
+/// <remarks>
+/// <para>
+/// <see cref="StardewValley.Tools.FishingRod"/> increments this game stat on every <em>cast</em>,
+/// i.e. before any fish is caught; thus any location checking for <see cref="Stats.TimesFished"/>
+/// (e.g. for a seeded random check) needs to see the current value + 1 if we bypass the rod and
+/// directly call <see cref="GameLocation.getFish"/>.
+/// </para>
+/// <para>
+/// Currently, this is only known to affect the island, and could potentially be part of the
+/// <see cref="NutDropSideEffect"/>; however, since it is cheap to run and could easily be included
+/// in some modded or future vanilla logic, it's better to run all the time.
+/// </para>
+/// </remarks>
+public class TimesFishedSideEffect : IFishSideEffect
+{
+    private uint previousTimesFished;
+
+    public bool AppliesTo(Farmer who, GameLocation location)
+    {
+        return true;
+    }
+
+    public void Snapshot(Farmer who)
+    {
+        previousTimesFished = Game1.stats.TimesFished;
+        Game1.stats.TimesFished++;
+    }
+
+    public void Undo(Farmer who)
+    {
+        Game1.stats.TimesFished = previousTimesFished;
+    }
+}

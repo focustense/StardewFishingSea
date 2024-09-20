@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using FishinC.Configuration;
-using Microsoft.Xna.Framework;
 using StardewValley.Extensions;
 using StardewValley.GameData;
 using StardewValley.GameData.Locations;
@@ -20,7 +19,13 @@ internal record CatchPrediction(Point Tile, string FishId);
 /// Predicts the fish catches in a local area.
 /// </summary>
 /// <param name="configSelector">Function to get the current mod config.</param>
-internal class CatchPreview(Func<ModConfig> configSelector, params IFishSideEffect[] sideEffects)
+/// <param name="monitor">Logger instance for the mod.</param>
+/// <param name="sideEffects">Known side effects to track and undo after each prediction.</param>
+internal class CatchPreview(
+    Func<ModConfig> configSelector,
+    IMonitor monitor,
+    params IFishSideEffect[] sideEffects
+)
 {
     /// <summary>
     /// Whether or not predictions are enabled.
@@ -214,7 +219,21 @@ internal class CatchPreview(Func<ModConfig> configSelector, params IFishSideEffe
             {
                 foreach (var sideEffect in currentSideEffects)
                 {
-                    sideEffect.Undo(Game1.player);
+                    // While it's very bad to fail undoing even one side effect, it's even worse to
+                    // fail all of them because one of them failed.
+                    try
+                    {
+                        sideEffect.Undo(Game1.player);
+                    }
+                    catch (Exception ex)
+                    {
+                        // This runs for every prediction on every update tick, so don't spam log
+                        // messages if one is consistently failing.
+                        monitor.LogOnce(
+                            $"Unexpected error while undoing {sideEffect.GetType().Name}: {ex}",
+                            LogLevel.Error
+                        );
+                    }
                 }
                 rng.Rewind();
             }

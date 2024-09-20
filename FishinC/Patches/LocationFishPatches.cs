@@ -8,6 +8,7 @@ namespace FishinC.Patches;
 
 internal static class LocationFishPatches
 {
+    [HarmonyPriority(Priority.VeryLow)]
     [SuppressMessage(
         "Style",
         "IDE0060:Remove unused parameter",
