@@ -448,7 +448,7 @@ internal class SettingsView(
         var freezeRow = CreateBulletPoint(
             ruleSet.FreezeOnCast
                 ? I18n.Settings_Rules_FreezeOnCast_Enabled()
-                : I18n.Settines_Rules_FreezeOnCast_Disabled()
+                : I18n.Settings_Rules_FreezeOnCast_Disabled()
         );
         var respawnRow = CreateBulletPoint(
             ruleSet.RespawnOnCancel

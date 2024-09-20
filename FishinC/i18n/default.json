@@ -67,7 +67,7 @@
   "Settings.Rules.FishPredictions.Description": "Display the fish that will be caught on each water tile",
   "Settings.Rules.JellyPredictions.Title": "Jelly predictions",
   "Settings.Rules.JellyPredictions.Description": "Display a HUD indicating when jellies are catchable/how many other fish must be caught first",
-  "Settines.Rules.FreezeOnCast.Disabled": "Outcomes may change while the line is cast",
+  "Settings.Rules.FreezeOnCast.Disabled": "Outcomes may change while the line is cast",
   "Settings.Rules.FreezeOnCast.Enabled": "Outcomes cannot change while the line is cast",
   "Settings.Rules.FreezeOnCast.Title": "Freeze on cast",
   "Settings.Rules.FreezeOnCast.Description": "Prevent catchable fish from respawning on schedule while the line is cast",
