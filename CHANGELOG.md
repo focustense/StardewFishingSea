@@ -6,12 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-## [0.1.0] - 2024-08-02
+## [0.1.0] - 2024-09-20
 
 ### Added
 
 - Initial release.
-- [Add bullet points for alpha features.]
+- Splash predictions - show durations/wait times on splash spots.
+- Fish predictions - show next catches, per tile.
+- Seeded-random predictions - HUD showing jelly state/remaining catches.
+- Accelerate game time and NPC speeds during fishing wait periods.
+- API, third-party patching and other compatibility features.
 
 [Unreleased]: https://github.com/focustense/StardewFishingSea/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/focustense/StardewFishingSea/tree/v0.1.0

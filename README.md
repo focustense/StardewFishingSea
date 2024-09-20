@@ -39,7 +39,7 @@ Most of AFS's features are predictive in some way, except for [timescaling](#fis
 ### Improved Bubbles
 
 > *"Ah, the exact center of the Atlantic Ocean. This seems the logical place for fish to congregate!"*
->     -- Professor Hubert J. Farnsworth
+>     -- Prof. Hubert J. Farnsworth
 
 [Fishing bubbles](https://stardewvalleywiki.com/Fishing#Bubbles), internally called "splash points", cause fish to bite 4 times faster. This is immensely useful in the early game, when you cannot use spinners and might not have access to high-quality bait (or any bait at all), and when you are trying to level-up your fishing skill. However, the location and duration of these splash points is randomized, and to maximize catches/profits, you must consider whether the extra catches from one will be worth the time to walk back and forth and possibly have lower-quality catches.
 
@@ -84,6 +84,9 @@ You, the player, have three important choices to make, two of which are consider
 
 #### Freeze on Cast
 
+> *"You and your worms are fishing in the past, Hank, in the days of black-and-white television and a democratically elected Congress."*
+>     -- Dale Gribble
+
 Should fish be allowed to respawn after you've cast your line -- but before you've hooked one -- or should your catch be "locked in" as soon as you cast?
 
 If this setting is enabled, then if you cast onto a tile predicted to yield, say, a Largemouth Bass, then when you eventually hook a fish, it *will* be a Largemouth Bass. However, if the setting is disabled, then a respawn may happen while your line is cast if the [respawn interval](#respawn-interval) is up. If the interval is 10 minutes, and you wait 15 minutes for a bite, you won't catch the originally-predicted fish.
@@ -126,6 +129,9 @@ Respawn interval is not considered a difficulty setting, because even though it 
 - For reference, the most "vanilla" value is actually zero; as described earlier, the specific fish that you will catch in an unmodded game can literally vary from frame to frame. The default value of 20 minutes is chosen to reflect this high variability.
 
 ### Jelly Countdowns
+
+> *"I came over to see if you wanted to go jellyfishing, but I can see you're busy having an episode."*
+>     -- SpongeBob
 
 > [!WARNING]
 >
@@ -374,7 +380,31 @@ The various interfaces are spread across multiple files in the mod's source code
 
 ### Aren't accurate fish predictions impossible?
 
+Yes - unless we make them possible.
+
+Many if not most random checks in Stardew use a "day-save random" or other random seed, which is predictable by design; the basic game-design principle being to *prevent* the failure mode of [save-scumming](https://tvtropes.org/pmwiki/pmwiki.php/Main/SaveScumming) leading to boredom and burnout. Fishing, however, uses global entropy -- that is, `Game1.random`, a single RNG shared by all aspects of the game including those that have nothing to do with fishing, like critter animations or even clouds. This is why the [Map Predictor](https://www.nexusmods.com/stardewvalley/mods/6614) can't really tell you anything about fishing, and other mods can only show you "probabilities", or replace the entire fishing system wholesale.
+
+AFS uses a more surgical approach, specifically taking advantage of the fact that every [PRNG](https://en.wikipedia.org/wiki/Pseudorandom_number_generator) has a "state", and what we call a "seed" is really just one way to initialize that state. To make catches predictable, we intercept the `Random` instance and forward it to a **replayable** instance that can either "catch up" to the current frame or "rewind" to a previous state; think of watching a live stream on Twich or YouTube.
+
+What this means in practical terms is that fishing with AFS produces the *exact same result* that vanilla fishing would produce at any give instant, with exactly the same probabilities in exactly the same locations, but can be "frozen" at that instant and "held" until the fish is caught, or the [respawn interval](#respawn-interval) is up, etc.
+
+It is still, technically, a cheat; I'm not here to play lawyer. However, it prefers the scalpel to the sledgehammer, and as a player, you will not notice any difference in fish spawns _except_ for being able to see what they are in advance. If we don't dwell on the obscure technical issue of global entropy, then it is effectively identical to the vanilla experience -- except with accurate forecasting.
+
 ### How does the timescale work and can it break anything?
+
+There are two aspects to time scaling: game speed and character speed.
+
+Game speed is the "easy" part, and speeding up the clock operates on the same principle as [TimeSpeed](https://www.nexusmods.com/stardewvalley/mods/169), by simply manipulating the `gameTimeInterval`.
+
+However, mods that alter time are usually _slowing it down_, or speeding it up by a modest amount. When dealing with speedups of 4x or even 10x, a lot of things can break, including NPC schedules and pathfinding. Plus, it's just more fun to watch the entire world in fast-forward, isn't it?
+
+Consequently, AFS introduces several patches to:
+
+- Increase the movement speed of characters (NPCs, animals, etc.) without directly writing to their `speed`, because the game is constantly adjusting their speed and overwriting it can cause those characters to get stuck;
+- Reduce the *real time delays* of characters, such as when they are blocked by the player or an obstacle;
+- Tighten up Stardew's brittle pathfinding, which is tuned for very low speeds and cannot handle "overshoot" (when a character does not hit the exact center of a tile) very well.
+
+This has undergone a lot of testing and should be stable, but it is unusual territory for mods. If you think you've found a bug, please submit an issue and include a *minimal* save game (i.e. one that does not depend on hundreds of other mods or major expansions like SVE) that demonstrates the problem; or, if it can be replicated with a specific game seed and a few console commands, that works too.
 
 ### What kind of a dumb name is "A Fishing Sea", anyway?
 
