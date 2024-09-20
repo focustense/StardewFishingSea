@@ -1,4 +1,7 @@
-﻿namespace FishinC.Data;
+﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+
+namespace FishinC.Data;
 
 /// <summary>
 /// Configures the rules for access to various features.
@@ -97,5 +100,62 @@ public class RuleSet
         JellyPredictions = other.JellyPredictions;
         FreezeOnCast = other.FreezeOnCast;
         RespawnOnCancel = other.RespawnOnCancel;
+    }
+
+    /// <summary>
+    /// Prevents the <see cref="Description"/> from being serialized by <c>Newtonsoft.Json</c>.
+    /// </summary>
+    /// <remarks>
+    /// Description should only be read, not written. It is only used by built-in rule sets and has
+    /// no meaning in configuration data.
+    /// </remarks>
+    /// <returns><c>false</c></returns>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [SuppressMessage(
+        "Performance",
+        "CA1822:Mark members as static",
+        Justification = "Must be public to be seen by Newtonsoft.Json"
+    )]
+    public bool ShouldSerializeDescription()
+    {
+        return false;
+    }
+
+    /// <summary>
+    /// Prevents the <see cref="SpriteItemId"/> from being serialized by <c>Newtonsoft.Json</c>.
+    /// </summary>
+    /// <remarks>
+    /// Sprite item ID should only be read, not written. It is only used by built-in rule sets and
+    /// has no meaning in configuration data.
+    /// </remarks>
+    /// <returns><c>false</c></returns>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [SuppressMessage(
+        "Performance",
+        "CA1822:Mark members as static",
+        Justification = "Must be public to be seen by Newtonsoft.Json"
+    )]
+    public bool ShouldSerializeSpriteItemId()
+    {
+        return false;
+    }
+
+    /// <summary>
+    /// Prevents the <see cref="Title"/> from being serialized by <c>Newtonsoft.Json</c>.
+    /// </summary>
+    /// <remarks>
+    /// Title should only be read, not written. It is only used by built-in rule sets and has no
+    /// meaning in configuration data.
+    /// </remarks>
+    /// <returns><c>false</c></returns>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [SuppressMessage(
+        "Performance",
+        "CA1822:Mark members as static",
+        Justification = "Must be public to be seen by Newtonsoft.Json"
+    )]
+    public bool ShouldSerializeTitle()
+    {
+        return false;
     }
 }
