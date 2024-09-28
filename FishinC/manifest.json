@@ -1,7 +1,7 @@
 ﻿{
   "Name": "A Fishing Sea",
   "Author": "focustense",
-  "Version": "0.1.0",
+  "Version": "0.1.1",
   "Description": "Make fishing more enjoyable and less time-wasting. Adds fish predictions, jelly predictions, bubble info and more.",
   "UniqueID": "focustense.FishinC",
   "EntryDll": "FishinC.dll",
