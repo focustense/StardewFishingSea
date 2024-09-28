@@ -189,7 +189,7 @@ internal class CatchPreview(Func<ModConfig> configSelector, SideEffectRegistry s
         foreach (var tile in fishingTiles)
         {
             using var randomScope = rng.Scope();
-            using var sideEffectScope = sideEffects.BeginScope(Game1.player, location);
+            using var sideEffectScope = sideEffects.BeginScope(Game1.player, location, tile);
             var distanceToLand = FishingRod.distanceToLand(tile.X, tile.Y, location);
             var fish = location.getFish(
                 millisecondsAfterNibble: 0.0f, // Unused since a very long time ago

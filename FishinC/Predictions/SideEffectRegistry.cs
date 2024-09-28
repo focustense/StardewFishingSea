@@ -8,6 +8,7 @@ internal class SideEffectRegistry(IMonitor monitor) : ISideEffectsApi
     private readonly List<IFishSideEffect> sideEffects =
     [
         new TimesFishedSideEffect(),
+        new FishPondSideEffect(),
         new NutDropSideEffect(),
     ];
 
@@ -25,11 +26,12 @@ internal class SideEffectRegistry(IMonitor monitor) : ISideEffectsApi
     /// </remarks>
     /// <param name="who">The current player.</param>
     /// <param name="location">The player's current location.</param>
+    /// <param name="tile">Tile where the prediction will be done.</param>
     /// <returns>An <see cref="IDisposable"/> which, when disposed, will undo any known side effects
     /// that occurred during or after the snapshots.</returns>
-    public IDisposable BeginScope(Farmer who, GameLocation location)
+    public IDisposable BeginScope(Farmer who, GameLocation location, Point tile)
     {
-        var possibleSideEffects = sideEffects.Where(e => e.AppliesTo(who, location));
+        var possibleSideEffects = sideEffects.Where(e => e.AppliesTo(who, location, tile));
         var scopedSideEffects = new List<IFishSideEffect>(sideEffects.Count);
         foreach (var sideEffect in possibleSideEffects)
         {
@@ -37,7 +39,7 @@ internal class SideEffectRegistry(IMonitor monitor) : ISideEffectsApi
             {
                 // If a side effect fails to snapshot, then trying to undo it would only corrupt
                 // game state even further, so only track the ones that succeeded.
-                sideEffect.Snapshot(who);
+                sideEffect.Snapshot(who, location, tile);
                 scopedSideEffects.Add(sideEffect);
             }
             catch (Exception ex)
