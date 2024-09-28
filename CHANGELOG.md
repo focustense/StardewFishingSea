@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.1] - 2024-09-28
+
+### Fixed
+
+- Fish are no longer removed from fish ponds when predictions are on.
+
 ## [0.1.0] - 2024-09-20
 
 ### Added
@@ -17,5 +23,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Accelerate game time and NPC speeds during fishing wait periods.
 - API, third-party patching and other compatibility features.
 
-[Unreleased]: https://github.com/focustense/StardewFishingSea/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/focustense/StardewFishingSea/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/focustense/StardewFishingSea/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/focustense/StardewFishingSea/tree/v0.1.0
