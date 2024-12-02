@@ -161,7 +161,7 @@ internal sealed class ModEntry : Mod
     private void GameLoop_GameLaunched(object? sender, GameLaunchedEventArgs e)
     {
         Apis.LoadAll(Helper.ModRegistry);
-        GmcmIntegration.Register(ModManifest, () => data, configContainer);
+        GmcmIntegration.Register(ModManifest, configContainer);
         ViewEngineIntegration.Register(ModManifest, configContainer, () => data, Monitor);
     }
 

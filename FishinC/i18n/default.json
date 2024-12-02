@@ -48,7 +48,7 @@
   "FlavorQuote.10": "J. Zoidberg|These sardines, for example, are bland and tasteless. And these dry, stringly nightcrawlers, though juicy... very, VERY juicy...",
 
   // GMCM. We don't really "use" GMCM except to add a stub, so this is placeholder text.
-  "Gmcm.Placeholder": "If you're reading this text, then something went wrong during mod startup and we aren't able to show the settings menu right now. You can access the settings directly while in-game by pressing {{keybind}}.",
+  "Gmcm.Placeholder": "Unable to display the mod settings right now: either Stardew UI is not installed, or this version of {{modName}} is not compatible with your installed version of Generic Mod Config Menu. Please consult the SMAPI log for details. You can access the settings for {{modName}} directly while in-game by pressing {{keybind}}.",
 
   // In-game UI.
   "HudMessage.Disabled": "Fishing overlays disabled",

@@ -1,6 +1,4 @@
-﻿using FishinC.Configuration;
-using FishinC.Data;
-using FishinC.UI;
+﻿using FishinC.Integrations.StardewUI;
 using GenericModConfigMenu;
 using HarmonyLib;
 
@@ -10,24 +8,14 @@ internal static class GmcmPatches
 {
     delegate void OpenListMenuDelegate(int? listScrollRow);
 
-    // Initialized in Init.
-    private static IConfigurationContainer<ModConfig> configContainer = null!;
-    private static Func<ModData> dataSelector = null!;
+    // Initialized in Apply.
     private static IManifest modManifest = null!;
 
-    // Initialized after first prefix.
-    private static OpenListMenuDelegate openListMenu = null!;
+    // Lazily initialized.
+    private static OpenListMenuDelegate? openListMenu;
 
-    public static void Apply(
-        Harmony harmony,
-        IGenericModConfigMenuApi api,
-        IManifest modManifest,
-        Func<ModData> dataSelector,
-        IConfigurationContainer<ModConfig> configContainer
-    )
+    public static void Apply(Harmony harmony, IGenericModConfigMenuApi api, IManifest modManifest)
     {
-        GmcmPatches.configContainer = configContainer;
-        GmcmPatches.dataSelector = dataSelector;
         GmcmPatches.modManifest = modManifest;
 
         var assembly = new Traverse(api).Field("__Target").GetValue().GetType().Assembly;
@@ -41,31 +29,16 @@ internal static class GmcmPatches
 
     private static bool OpenModMenu_Prefix(object __instance, IManifest mod, int? listScrollRow)
     {
+        if (mod != modManifest)
+        {
+            return true;
+        }
         if (openListMenu is null)
         {
             var openListMethod = AccessTools.Method(__instance.GetType(), "OpenListMenu");
             openListMenu = openListMethod.CreateDelegate<OpenListMenuDelegate>(__instance);
         }
-        if (mod == modManifest)
-        {
-            OpenSettingsMenu(() =>
-            {
-                Game1.playSound("bigDeSelect");
-                openListMenu(listScrollRow);
-            });
-            return false;
-        }
-        return true;
-    }
-
-    private static void OpenSettingsMenu(Action onClose)
-    {
-        var menu = new SettingsMenu(
-            dataSelector(),
-            configContainer,
-            allowDefaultClose: false,
-            close: onClose
-        );
-        menu.SetActive(true);
+        ViewEngineIntegration.OpenSettingsMenu(() => openListMenu(listScrollRow));
+        return false;
     }
 }

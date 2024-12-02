@@ -39,7 +39,7 @@ internal static class ViewEngineIntegration
 #endif
     }
 
-    public static void OpenSettingsMenu(Action? close = null)
+    public static void OpenSettingsMenu(Action? closeFromTitle = null)
     {
         if (Apis.ViewEngine is not { } viewEngine)
         {
@@ -49,7 +49,7 @@ internal static class ViewEngineIntegration
             );
             return;
         }
-        close ??= CloseSettingsMenu;
+        var close = () => CloseSettingsMenu(closeFromTitle);
         var viewModel = new SettingsViewModel(configContainer, dataSelector(), close);
         var controller = viewEngine.CreateMenuControllerFromAsset(
             $"Mods/{mod.UniqueID}/Views/Settings",
@@ -73,11 +73,18 @@ internal static class ViewEngineIntegration
         }
     }
 
-    private static void CloseSettingsMenu()
+    private static void CloseSettingsMenu(Action? closeFromTitle)
     {
         if (Game1.activeClickableMenu is TitleMenu)
         {
-            TitleMenu.subMenu = null;
+            if (closeFromTitle is not null)
+            {
+                closeFromTitle();
+            }
+            else
+            {
+                TitleMenu.subMenu = null;
+            }
             return;
         }
         var settingsMenu = GetFrontMenu();
