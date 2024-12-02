@@ -1,4 +1,5 @@
 ﻿{
+  "$schema": "https://smapi.io/schemas/manifest.json",
   "Name": "A Fishing Sea",
   "Author": "focustense",
   "Version": "0.1.1",
@@ -6,6 +7,10 @@
   "UniqueID": "focustense.FishinC",
   "EntryDll": "FishinC.dll",
   "Dependencies": [
+    {
+      "UniqueID": "focustense.StardewUI",
+      "IsRequired": false
+    },
     {
       "UniqueID": "spacechase0.GenericModConfigMenu",
       "IsRequired": false

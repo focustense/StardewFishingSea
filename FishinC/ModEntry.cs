@@ -2,6 +2,7 @@
 using FishinC.Data;
 using FishinC.Integrations;
 using FishinC.Integrations.Gmcm;
+using FishinC.Integrations.StardewUI;
 using FishinC.Patches;
 using FishinC.Predictions;
 using FishinC.UI;
@@ -30,8 +31,9 @@ internal sealed class ModEntry : Mod
     private static readonly Vector2 SplashOverlayMaxSize = new(500, 500);
 
     private readonly PerScreen<Splash?> splash = new();
-    private readonly PerScreen<SpeechBubble<SplashInfoView>> splashOverlay =
-        new(CreateSplashOverlay);
+    private readonly PerScreen<SpeechBubble<SplashInfoView>> splashOverlay = new(
+        CreateSplashOverlay
+    );
     private readonly Dictionary<string, IReadOnlyList<Splash>> splashSchedules = [];
 
     // Initialized in Entry
@@ -160,6 +162,7 @@ internal sealed class ModEntry : Mod
     {
         Apis.LoadAll(Helper.ModRegistry);
         GmcmIntegration.Register(ModManifest, () => data, configContainer);
+        ViewEngineIntegration.Register(ModManifest, configContainer, () => data, Monitor);
     }
 
     private void GameLoop_ReturnedToTitle(object? sender, ReturnedToTitleEventArgs e)
@@ -222,7 +225,7 @@ internal sealed class ModEntry : Mod
             && Config.SettingsKeybind.JustPressed()
         )
         {
-            Game1.activeClickableMenu = new SettingsMenu(data, configContainer);
+            ViewEngineIntegration.OpenSettingsMenu();
         }
     }
 
@@ -331,7 +334,7 @@ internal sealed class ModEntry : Mod
         SplashOverlay.Draw(overlayBatch);
     }
 
-    private static Vector2 GetViewportPosition(NineGridPlacement placement)
+    private static Vector2 GetViewportPosition(Configuration.NineGridPlacement placement)
     {
         var deviceViewport = Game1.graphics.GraphicsDevice.Viewport;
         var uiViewport = Game1.uiViewport;
