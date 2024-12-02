@@ -1,0 +1,39 @@
+{
+  "Texture": "LooseSprites/Cursors",
+  "Sprites": {
+    "BobberDefault": {
+      "SourceRect": "170, 1903, 7, 8"
+    },
+    "GenericFish": {
+      "SourceRect": "615, 1841, 19, 19"
+    },
+    "OverlayDrawer": {
+      "SourceRect": "317, 361, 12, 22",
+      "FixedEdges": "1, 7, 6, 4",
+      "Scale": 4
+    },
+    "OverlayFrame": {
+      "SourceRect": "293, 360, 24, 24",
+      "FixedEdges": "5",
+      "Scale": 4
+    },
+    "SpeechBubbleBody": {
+      "SourceRect": "141, 465, 20, 20",
+      "FixedEdges": "5",
+      "Scale": 4
+    },
+    "SpeechBubbleCloser": {
+      "SourceRect": "145, 484, 4, 1"
+    },
+    "SpeechBubbleTail": {
+      "SourceRect": "141, 484, 20, 5",
+      "Scale": 4
+    },
+    "TinyClock": {
+      "SourceRect": "434, 475, 9, 9"
+    },
+    "Water": {
+      "SourceRect": "0, 2000, 640, 256"
+    }
+  }
+}

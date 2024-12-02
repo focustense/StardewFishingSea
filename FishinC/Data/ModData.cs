@@ -6,7 +6,7 @@ namespace FishinC.Data;
 /// <summary>
 /// Holds all built-in/moddable data for the mod.
 /// </summary>
-internal class ModData(IModHelper helper)
+public class ModData(IModHelper helper)
 {
     /// <summary>
     /// Dictionary of condition names to feature conditions.
