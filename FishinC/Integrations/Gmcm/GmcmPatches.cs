@@ -25,6 +25,14 @@ internal static class GmcmPatches
             openModMenuMethod,
             prefix: new(typeof(GmcmPatches), nameof(OpenModMenu_Prefix))
         );
+        var openModMenuNewMethod = AccessTools.Method(modType, "OpenModMenuNew");
+        if (openModMenuNewMethod is not null)
+        {
+            harmony.Patch(
+                openModMenuNewMethod,
+                prefix: new(typeof(GmcmPatches), nameof(OpenModMenu_Prefix))
+            );
+        }
     }
 
     private static bool OpenModMenu_Prefix(object __instance, IManifest mod, int? listScrollRow)
