@@ -56,6 +56,10 @@
       <Content Include="assets\views\SeedFishInfo.sml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Remove="assets\views\SplashInfo.sml" />
+      <Content Include="assets\views\SplashInfo.sml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <Import Project="..\StardewUI\StardewUI.projitems" Label="Shared" />

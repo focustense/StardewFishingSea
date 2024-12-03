@@ -31,7 +31,7 @@ public partial class SeedFishInfoViewModel
     /// Qualified item ID of the fish (i.e. jelly) to display.
     /// </summary>
     [Notify]
-    private string fishId = "";
+    private string? fishId;
 
     /// <summary>
     /// Number of catches remaining until the specified fish can be caught.
@@ -41,6 +41,6 @@ public partial class SeedFishInfoViewModel
 
     private void OnFishIdChanged()
     {
-        fishData = !string.IsNullOrEmpty(fishId) ? ItemRegistry.GetDataOrErrorItem(fishId) : null;
+        FishData = !string.IsNullOrEmpty(fishId) ? ItemRegistry.GetDataOrErrorItem(fishId) : null;
     }
 }
