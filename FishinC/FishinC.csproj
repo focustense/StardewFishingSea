@@ -61,6 +61,4 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
-
-    <Import Project="..\StardewUI\StardewUI.projitems" Label="Shared" />
 </Project>

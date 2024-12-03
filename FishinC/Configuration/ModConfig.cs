@@ -1,6 +1,5 @@
 ﻿using FishinC.Data;
 using StardewModdingAPI.Utilities;
-using StardewUI;
 
 namespace FishinC.Configuration;
 
