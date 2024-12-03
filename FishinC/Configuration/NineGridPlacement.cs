@@ -20,8 +20,16 @@ public record NineGridPlacement(
     /// <summary>
     /// Computes the position of this placement within a given viewport.
     /// </summary>
-    /// <param name="size">The viewport size.</param>
-    public Vector2 GetPosition(Vector2 size)
+    /// <param name="viewportSize">The viewport size.</param>
+    /// <param name="contentSize">Size of the content to be positioned.</param>
+    public Vector2 GetPosition(Vector2 viewportSize, Vector2 contentSize)
+    {
+        var viewportPosition = GetPositionComponent(viewportSize);
+        var contentOffset = GetPositionComponent(contentSize);
+        return viewportPosition - contentOffset + Offset.ToVector2();
+    }
+
+    private Vector2 GetPositionComponent(Vector2 size)
     {
         var x = HorizontalAlignment switch
         {

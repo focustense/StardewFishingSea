@@ -9,7 +9,6 @@ using FishinC.UI;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
-using StardewUI;
 using StardewValley.Tools;
 
 namespace FishinC;
@@ -20,20 +19,17 @@ internal sealed class ModEntry : Mod
     private ModConfig Config => configContainer.Config;
     private RuleSet CurrentRules => configContainer.Config.Rules;
     private FishingState FishingState => fishingState.Value;
-    private SeedFishInfoView SeedFishPreview => seedFishPreview.Value;
+    private IViewDrawable? SeedFishPreviewDrawable => seedFishPreviewDrawable.Value;
+    private SeedFishInfoViewModel SeedFishPreviewViewModel => seedFishPreviewViewModel.Value;
     private Splash? Splash
     {
         get => splash.Value;
         set => splash.Value = value;
     }
-    private SpeechBubble<SplashInfoView> SplashOverlay => splashOverlay.Value;
-
-    private static readonly Vector2 SplashOverlayMaxSize = new(500, 500);
+    private IViewDrawable? SplashInfoDrawable => splashInfoDrawable.Value;
+    private SplashInfoViewModel SplashInfoViewModel => splashInfoViewModel.Value;
 
     private readonly PerScreen<Splash?> splash = new();
-    private readonly PerScreen<SpeechBubble<SplashInfoView>> splashOverlay = new(
-        CreateSplashOverlay
-    );
     private readonly Dictionary<string, IReadOnlyList<Splash>> splashSchedules = [];
 
     // Initialized in Entry
@@ -42,20 +38,27 @@ internal sealed class ModEntry : Mod
     private ConfigurationContainer<ModConfig> configContainer = null!;
     private ModData data = null!;
     private PerScreen<FishingState> fishingState = null!;
-    private PerScreen<SeedFishInfoView> seedFishPreview = null!;
+    private PerScreen<IViewDrawable?> seedFishPreviewDrawable = null!;
+    private PerScreen<SeedFishInfoViewModel> seedFishPreviewViewModel = null!;
+    private PerScreen<IViewDrawable?> splashInfoDrawable = null!;
+    private PerScreen<SplashInfoViewModel> splashInfoViewModel = null!;
     private static TimeAccelerator timeAccelerator = null!;
 
     public override void Entry(IModHelper helper)
     {
         I18n.Init(helper.Translation);
         Quotes.Init(helper.Translation);
-        StardewUI.UI.Initialize(helper, Monitor);
         data = new(helper);
         configContainer = new(helper);
         timeAccelerator = new(() => Config);
         var sideEffects = new SideEffectRegistry(Monitor);
-        catchPreview = new(() => new CatchPreview(() => Config, sideEffects));
-        seedFishPreview = new(() => new SeedFishInfoView());
+        catchPreview = new(() => new(() => Config, sideEffects));
+        seedFishPreviewViewModel = new(() => new());
+        seedFishPreviewDrawable = new(
+            () => CreateViewDrawable("SeedFishInfo", SeedFishPreviewViewModel)
+        );
+        splashInfoViewModel = new(() => new());
+        splashInfoDrawable = new(() => CreateViewDrawable("SplashInfo", SplashInfoViewModel));
         fishingState = new(() =>
         {
             var state = new FishingState();
@@ -167,8 +170,12 @@ internal sealed class ModEntry : Mod
 
     private void GameLoop_ReturnedToTitle(object? sender, ReturnedToTitleEventArgs e)
     {
-        splash.ResetAllScreens();
         catchPreview.ResetAllScreens();
+        splash.ResetAllScreens();
+        seedFishPreviewDrawable.ResetAllScreens();
+        seedFishPreviewViewModel.ResetAllScreens();
+        splashInfoDrawable.ResetAllScreens();
+        splashInfoViewModel.ResetAllScreens();
         FishRandom.ResetAllScreens();
     }
 
@@ -251,9 +258,18 @@ internal sealed class ModEntry : Mod
             && GameStateQuery.CheckConditions(condition.Query);
     }
 
-    private static SpeechBubble<SplashInfoView> CreateSplashOverlay()
+    private IViewDrawable? CreateViewDrawable(string viewName, object context)
     {
-        return new() { Content = new SplashInfoView() };
+        var drawable = Apis.ViewEngine?.CreateDrawableFromAsset(
+            $"Mods/{ModManifest.UniqueID}/Views/{viewName}"
+        );
+        if (drawable is null)
+        {
+            return null;
+        }
+        drawable.Context = context;
+        drawable.MaxSize = new(500, 500);
+        return drawable;
     }
 
     private void DrawCatchPreviews(SpriteBatch spriteBatch)
@@ -287,19 +303,19 @@ internal sealed class ModEntry : Mod
     {
         if (
             !CatchPreview.Enabled
-            || SeedFishPreview.FishId is null
+            || string.IsNullOrEmpty(SeedFishPreviewViewModel.FishId)
+            || !Game1.currentLocation.canFishHere()
             || !CheckRuleCondition(rules => rules.JellyPredictions)
+            || SeedFishPreviewDrawable is null
         )
         {
             return;
         }
-        SeedFishPreview.Measure(new(500, 500));
-        var position = GetViewportPosition(Config.SeededRandomFishHudPlacement);
-        var overlayBatch = new PropagatedSpriteBatch(
-            spriteBatch,
-            Transform.FromTranslation(position)
+        var position = GetViewportPosition(
+            Config.SeededRandomFishHudPlacement,
+            SeedFishPreviewDrawable.ActualSize
         );
-        SeedFishPreview.Draw(overlayBatch);
+        SeedFishPreviewDrawable.Draw(spriteBatch, position);
     }
 
     private void DrawSplashPreview(SpriteBatch spriteBatch)
@@ -315,32 +331,28 @@ internal sealed class ModEntry : Mod
                 Splash.StartTimeOfDay > Game1.timeOfDay
                 && !CheckRuleCondition(rules => rules.FutureBubbles)
             )
+            || SplashInfoDrawable is null
         )
         {
             return;
         }
-        SplashOverlay.Measure(SplashOverlayMaxSize);
         var splashTilePos = new Vector2(Splash.Tile.X * 64, Splash.Tile.Y * 64);
         var splashTileCenter = splashTilePos + new Vector2(32, 32);
         var overlayPos = new Vector2(
-            splashTileCenter.X - SplashOverlay.OuterSize.X / 2,
-            splashTileCenter.Y - SplashOverlay.OuterSize.Y - 16
+            splashTileCenter.X - SplashInfoDrawable.ActualSize.X / 2,
+            splashTileCenter.Y - SplashInfoDrawable.ActualSize.Y - 16
         );
         var translation = Game1.GlobalToLocal(Game1.viewport, overlayPos);
-        var overlayBatch = new PropagatedSpriteBatch(
-            spriteBatch,
-            Transform.FromTranslation(translation)
-        );
-        SplashOverlay.Draw(overlayBatch);
+        SplashInfoDrawable.Draw(spriteBatch, translation);
     }
 
-    private static Vector2 GetViewportPosition(Configuration.NineGridPlacement placement)
+    private static Vector2 GetViewportPosition(NineGridPlacement placement, Vector2 contentSize)
     {
         var deviceViewport = Game1.graphics.GraphicsDevice.Viewport;
         var uiViewport = Game1.uiViewport;
         var viewportWidth = Math.Min(deviceViewport.Width, uiViewport.Width);
         var viewportHeight = Math.Min(deviceViewport.Height, uiViewport.Height);
-        return placement.GetPosition(new(viewportWidth, viewportHeight));
+        return placement.GetPosition(new(viewportWidth, viewportHeight), contentSize);
     }
 
     private static bool IsEffectivelySinglePlayer()
@@ -380,19 +392,19 @@ internal sealed class ModEntry : Mod
     {
         if (CatchPreview.SeededRandomFish.Count > 0)
         {
-            SeedFishPreview.FishId = CatchPreview.SeededRandomFish[0].QualifiedItemId;
-            SeedFishPreview.CatchesRemaining = CatchPreview.SeededRandomCatchesRequired;
+            SeedFishPreviewViewModel.FishId = CatchPreview.SeededRandomFish[0].QualifiedItemId;
+            SeedFishPreviewViewModel.CatchesRemaining = CatchPreview.SeededRandomCatchesRequired;
         }
         else
         {
-            SeedFishPreview.FishId = null;
-            SeedFishPreview.CatchesRemaining = 0;
+            SeedFishPreviewViewModel.FishId = null;
+            SeedFishPreviewViewModel.CatchesRemaining = 0;
         }
     }
 
     private void UpdateSplashOverlay()
     {
-        if (Splash is not Splash currentSplash)
+        if (Splash is not { } currentSplash)
         {
             return;
         }
@@ -403,7 +415,7 @@ internal sealed class ModEntry : Mod
                     currentSplash.StartTimeOfDay
                 )
                 : Utility.CalculateMinutesBetweenTimes(Game1.timeOfDay, currentSplash.EndTimeOfDay);
-        SplashOverlay.Content!.FrenzyFishId = currentSplash.FrenzyFishId;
-        SplashOverlay.Content!.DurationMinutes = durationMinutes;
+        SplashInfoViewModel.FrenzyFishId = currentSplash.FrenzyFishId;
+        SplashInfoViewModel.DurationMinutes = durationMinutes;
     }
 }
