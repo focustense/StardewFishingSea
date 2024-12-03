@@ -162,7 +162,8 @@
            focusable="true"
            tooltip={&description}
            left-click=|^SelectRuleSet(&name)|>
-        <panel layout="content[120..] content">
+        <panel layout="content[150..] content"
+               horizontal-content-alignment="middle">
             <image *if={&selected}
                    layout="stretch"
                    fit="stretch"
