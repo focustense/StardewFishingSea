@@ -16,6 +16,7 @@
       "IsRequired": false
     }
   ],
-  "MinimumApiVersion": "4.0.5",
+  "MinimumApiVersion": "4.1.7",
+  "MinimumGameVersion": "1.6.14",
   "UpdateKeys": [ "Nexus:27665", "GitHub:focustense/StardewFishingSea" ]
 }

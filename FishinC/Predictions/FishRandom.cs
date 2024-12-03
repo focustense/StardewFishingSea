@@ -38,8 +38,9 @@ internal static class FishRandom
         set => source.Value = value;
     }
 
-    private static readonly PerScreen<FishRandomSource> source =
-        new(() => FishRandomSource.Default);
+    private static readonly PerScreen<FishRandomSource> source = new(
+        () => FishRandomSource.Default
+    );
 
     /// <summary>
     /// Resets to <see cref="FishRandomSource.Default"/> on all screens.
