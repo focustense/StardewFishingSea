@@ -30,6 +30,7 @@ internal sealed class ModEntry : Mod
     private SplashInfoViewModel SplashInfoViewModel => splashInfoViewModel.Value;
 
     private readonly PerScreen<Splash?> splash = new();
+    private readonly Bounce splashBounce = new(); // State can be shared between screens.
     private readonly Dictionary<string, IReadOnlyList<Splash>> splashSchedules = [];
 
     // Initialized in Entry
@@ -206,6 +207,7 @@ internal sealed class ModEntry : Mod
         }
         FishingState.Update(rod);
         CatchPreview.Update();
+        splashBounce.Update(Game1.currentGameTime.ElapsedGameTime);
         UpdateSeededRandomFishPreview();
     }
 
@@ -343,7 +345,7 @@ internal sealed class ModEntry : Mod
             splashTileCenter.Y - SplashInfoDrawable.ActualSize.Y - 16
         );
         var translation = Game1.GlobalToLocal(Game1.viewport, overlayPos);
-        SplashInfoDrawable.Draw(spriteBatch, translation);
+        SplashInfoDrawable.Draw(spriteBatch, translation + splashBounce.Offset);
     }
 
     private static Vector2 GetViewportPosition(NineGridPlacement placement, Vector2 contentSize)

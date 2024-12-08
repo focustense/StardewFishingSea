@@ -24,6 +24,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		StardewUI\StardewUI.projitems*{431c8e71-0644-4faa-81fb-d3ceeed6c89f}*SharedItemsImports = 5
-		StardewUI\StardewUI.projitems*{d3dbb38b-79af-4b84-b425-1cffdefa7a86}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal
