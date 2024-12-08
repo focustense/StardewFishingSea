@@ -9,7 +9,8 @@
   "Dependencies": [
     {
       "UniqueID": "focustense.StardewUI",
-      "IsRequired": true
+      "IsRequired": true,
+      "MinimumVersion": "0.4.2"
     },
     {
       "UniqueID": "spacechase0.GenericModConfigMenu",
