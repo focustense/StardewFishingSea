@@ -99,5 +99,8 @@
   "Settings.UI.HudLocation.Description": "Where the jelly indicator HUD will be shown on screen. Click and drag on the TV to position precisely.",
   "Settings.Button.Save": "Save",
   "Settings.Button.Cancel": "Cancel",
-  "Settings.Button.Default": "Reset All"
+  "Settings.Button.Default": "Reset All",
+
+  // Star Control integration
+  "StarControl.ToggleOverlays.Description": "Toggle Overlays"
 }

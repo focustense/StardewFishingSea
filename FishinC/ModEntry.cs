@@ -2,6 +2,7 @@
 using FishinC.Data;
 using FishinC.Integrations;
 using FishinC.Integrations.Gmcm;
+using FishinC.Integrations.StarControl;
 using FishinC.Integrations.StardewUI;
 using FishinC.Patches;
 using FishinC.Predictions;
@@ -167,6 +168,7 @@ internal sealed class ModEntry : Mod
         Apis.LoadAll(Helper.ModRegistry);
         GmcmIntegration.Register(ModManifest, configContainer);
         ViewEngineIntegration.Register(ModManifest, configContainer, () => data, Monitor);
+        StarControlIntegration.Register(ModManifest, ToggleOverlays);
     }
 
     private void GameLoop_ReturnedToTitle(object? sender, ReturnedToTitleEventArgs e)
@@ -219,13 +221,7 @@ internal sealed class ModEntry : Mod
         }
         if (Config.CatchPreviewToggleKeybind.JustPressed())
         {
-            CatchPreview.Enabled = !CatchPreview.Enabled;
-            Game1.addHUDMessage(
-                new(CatchPreview.Enabled ? I18n.HudMessage_Enabled() : I18n.HudMessage_Disabled())
-                {
-                    noIcon = true,
-                }
-            );
+            ToggleOverlays();
             Helper.Input.SuppressActiveKeybinds(Config.CatchPreviewToggleKeybind);
         }
         else if (
@@ -367,6 +363,17 @@ internal sealed class ModEntry : Mod
         Splash = null;
         AddSplashData(Game1.currentLocation);
         UpdateNextSplash();
+    }
+
+    private void ToggleOverlays()
+    {
+        CatchPreview.Enabled = !CatchPreview.Enabled;
+        Game1.addHUDMessage(
+            new(CatchPreview.Enabled ? I18n.HudMessage_Enabled() : I18n.HudMessage_Disabled())
+            {
+                noIcon = true,
+            }
+        );
     }
 
     private void UpdateNextSplash()
